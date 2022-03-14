@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IS1420_Project">
         <activity
+            android:name=".CreateRestaurantActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OwnerMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RestaurantMenuActivity"
+            android:exported="false" />
+        <activity
             android:name=".WelcomeActivity"
             android:exported="true">
             <intent-filter>
@@ -26,8 +35,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>

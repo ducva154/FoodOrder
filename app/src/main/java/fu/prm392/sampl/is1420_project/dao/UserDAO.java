@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -32,4 +33,8 @@ public class UserDAO {
         return doc.get();
     }
 
+    public Task<Void> saveToken(String token, String uid) {
+        DocumentReference reference = db.collection("Users").document(uid);
+        return reference.update("tokens", FieldValue.arrayUnion(token));
+    }
 }

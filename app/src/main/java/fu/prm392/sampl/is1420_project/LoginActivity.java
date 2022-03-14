@@ -10,13 +10,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.utils.Utils;
@@ -87,14 +90,36 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String role = documentSnapshot.getString("userInfo.role");
                 switch (role){
-                    case "user":
+                    case "user": {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         LoginActivity.this.finish();
                         break;
-                    case "owner":
+                    }
+                    case "owner": {
+                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w("Fetch Token Error", "Fetching FCM registration token failed", task.getException());
+                                    return;
+                                }
+                                String token = task.getResult();
+                                UserDAO userDAO = new UserDAO();
+                                try {
+                                    userDAO.saveToken(token, user.getUid());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        Intent intent = new Intent(LoginActivity.this, OwnerMainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        LoginActivity.this.finish();
                         break;
+                    }
                     case "admin":
                         break;
                     default:

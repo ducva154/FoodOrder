@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CreateRestaurantActivity">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                style="@style/Widget.MaterialComponents.Toolbar.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:liftOnScroll="true"
+                app:navigationIcon="@drawable/ic_baseline_arrow_back_ios_24"
+                app:title="Create a Restaurant"
+                app:titleCentered="true" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp"
+                android:layout_marginBottom="0dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="50dp"
+                        android:orientation="vertical">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/etRestaurant"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:hint="Name"
+                            app:helperText="Require*"
+                            app:helperTextTextColor="@android:color/holo_red_light">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginEnd="20dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/etLocation"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Location"
+                                app:helperText="Require*"
+                                app:helperTextTextColor="@android:color/holo_red_light">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnLocation"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="50dp"
+                                android:layout_height="59dp"
+                                app:icon="@drawable/ic_baseline_location_on_24"
+                                app:iconGravity="textStart"
+                                app:iconSize="25dp"
+                                tools:ignore="SpeakableTextPresentCheck" />
+                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/img_photo"
+                            android:layout_width="200dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_baseline_image_24" />
+
+                        <Button
+                            android:id="@+id/btnChooseImage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Choose image" />
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/txtMenu"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+                                android:text="Menu"
+                                android:textSize="20dp"
+                                android:textStyle="bold" />
+
+                            <ImageButton
+                                android:id="@+id/imgBtnAdd"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="25dp"
+                                android:backgroundTint="@android:color/background_light"
+                                android:contentDescription="Add"
+                                android:src="@drawable/ic_baseline_add_circle_24" />
+                        </RelativeLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recycleMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="400dp"
+                            android:nestedScrollingEnabled="true"
+                            android:layout_margin="20dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        <Button
+            android:id="@+id/btnCreateNewRestaurant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:onClick="clickToCreate"
+            android:padding="10dp"
+            android:text="Create"
+            />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
