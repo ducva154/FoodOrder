@@ -52,7 +52,7 @@
                         android:layout_marginBottom="50dp"
                         android:orientation="vertical">
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/etRestaurant"
+                            android:id="@+id/etRestaurantName"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -149,6 +149,7 @@
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
+
         <Button
             android:id="@+id/btnCreateNewRestaurant"
             android:layout_width="match_parent"
@@ -156,9 +157,8 @@
             android:layout_gravity="bottom"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:onClick="clickToCreate"
+            android:onClick="clickCreate"
             android:padding="10dp"
-            android:text="Create"
-            />
+            android:text="Create" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

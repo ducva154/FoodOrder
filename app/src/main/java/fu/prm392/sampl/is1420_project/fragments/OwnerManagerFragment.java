@@ -4,22 +4,30 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fu.prm392.sampl.is1420_project.CreateRestaurantActivity;
 import fu.prm392.sampl.is1420_project.R;
+import fu.prm392.sampl.is1420_project.adapter.RestaurantAdapter;
+import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
+import fu.prm392.sampl.is1420_project.dto.UserDocument;
+import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,8 +87,7 @@ public class OwnerManagerFragment extends Fragment {
 
         btnCreate = view.findViewById(R.id.btnCreateRestaurant);
         recycleRestaurantView = view.findViewById(R.id.recycleRestaurantView);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        List<RestaurantDTO> restaurantDTOList = new ArrayList<>();
+        recycleRestaurantView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,5 +97,30 @@ public class OwnerManagerFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        UserDAO userDAO = new UserDAO();
+        userDAO.getUserById(user.getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                List<RestaurantDTO> restaurantDTOList = documentSnapshot
+                        .toObject(UserDocument.class).getRestaurantsInfo();
+                Log.d("USER", "dto: " + restaurantDTOList);
+                if (restaurantDTOList != null){
+                    RestaurantAdapter restaurantAdapter = new RestaurantAdapter(restaurantDTOList
+                            , getContext(), new OnItemClickListener() {
+                        @Override
+                        public void onItemClick(RestaurantDTO item) {
+
+                        }
+                    });
+                    recycleRestaurantView.setAdapter(restaurantAdapter);
+                }
+            }
+        });
     }
 }

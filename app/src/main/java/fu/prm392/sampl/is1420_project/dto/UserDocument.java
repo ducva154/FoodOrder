@@ -4,15 +4,15 @@ import java.util.List;
 
 public class UserDocument {
     private UserDTO userInfo;
-    private List<RestaurantDTO> restaurentsInfo;
+    private List<RestaurantDTO> restaurantsInfo;
     private List<String> tokens;
 
     public UserDocument() {
     }
 
-    public UserDocument(UserDTO userInfo, List<RestaurantDTO> restaurentsInfo, List<String> tokens) {
+    public UserDocument(UserDTO userInfo, List<RestaurantDTO> restaurantsInfo, List<String> tokens) {
         this.userInfo = userInfo;
-        this.restaurentsInfo = restaurentsInfo;
+        this.restaurantsInfo = restaurantsInfo;
         this.tokens = tokens;
     }
 
@@ -24,12 +24,12 @@ public class UserDocument {
         this.userInfo = userInfo;
     }
 
-    public List<RestaurantDTO> getRestaurentsInfo() {
-        return restaurentsInfo;
+    public List<RestaurantDTO> getRestaurantsInfo() {
+        return restaurantsInfo;
     }
 
-    public void setRestaurentsInfo(List<RestaurantDTO> restaurentsInfo) {
-        this.restaurentsInfo = restaurentsInfo;
+    public void setRestaurantsInfo(List<RestaurantDTO> restaurantsInfo) {
+        this.restaurantsInfo = restaurantsInfo;
     }
 
     public List<String> getTokens() {
@@ -44,7 +44,7 @@ public class UserDocument {
     public String toString() {
         return "UserDocument{" +
                 "userInfo=" + userInfo +
-                ", restaurentsInfo=" + restaurentsInfo +
+                ", restaurantsInfo=" + restaurantsInfo +
                 ", tokens=" + tokens +
                 '}';
     }

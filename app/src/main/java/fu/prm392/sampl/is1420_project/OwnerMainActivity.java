@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -23,6 +24,21 @@ public class OwnerMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_main);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        Intent intent=getIntent();
+        String action=intent.getStringExtra("action");
+
+        if(action != null && action.equals("view_my_field")){
+            Fragment fragment = new OwnerManagerFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+        }else{
+            //default fragment
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, new OwnerHomeFragment()).commit();
+        }
+
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -43,7 +59,6 @@ public class OwnerMainActivity extends AppCompatActivity {
             }
         });
 
-        //default fragment
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new OwnerHomeFragment()).commit();
+
     }
 }

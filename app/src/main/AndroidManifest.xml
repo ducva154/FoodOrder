@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IS1420_Project">
         <activity
+            android:name=".EditRestaurantActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreateRestaurantActivity"
             android:exported="false" />
         <activity
