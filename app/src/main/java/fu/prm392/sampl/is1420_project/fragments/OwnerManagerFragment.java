@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fu.prm392.sampl.is1420_project.CreateRestaurantActivity;
+import fu.prm392.sampl.is1420_project.EditRestaurantActivity;
 import fu.prm392.sampl.is1420_project.R;
 import fu.prm392.sampl.is1420_project.adapter.RestaurantAdapter;
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
@@ -112,10 +113,16 @@ public class OwnerManagerFragment extends Fragment {
                 Log.d("USER", "dto: " + restaurantDTOList);
                 if (restaurantDTOList != null){
                     RestaurantAdapter restaurantAdapter = new RestaurantAdapter(restaurantDTOList
-                            , getContext(), new OnItemClickListener() {
+                            , getActivity(), new OnItemClickListener() {
                         @Override
                         public void onItemClick(RestaurantDTO item) {
-
+                            try {
+                                Intent intent = new Intent(getActivity(), EditRestaurantActivity.class);
+                                intent.putExtra("restaurantID", item.getRestaurantID());
+                                startActivity(intent);
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                     recycleRestaurantView.setAdapter(restaurantAdapter);

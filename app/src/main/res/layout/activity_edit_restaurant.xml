@@ -157,8 +157,8 @@
                     android:id="@+id/recycleMenu"
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
-                    android:nestedScrollingEnabled="true"
-                    android:layout_margin="20dp"/>
+                    android:layout_margin="20dp"
+                    android:nestedScrollingEnabled="true" />
             </LinearLayout>
         </ScrollView>
         <LinearLayout
@@ -175,6 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_weight="1"
+                android:onClick="clickUpdate"
                 android:text="Update" />
 
             <Button
@@ -182,6 +183,7 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="clickDelete"
                 android:text="Delete" />
         </LinearLayout>
 

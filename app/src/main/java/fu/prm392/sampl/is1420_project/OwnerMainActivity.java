@@ -28,11 +28,11 @@ public class OwnerMainActivity extends AppCompatActivity {
         Intent intent=getIntent();
         String action=intent.getStringExtra("action");
 
-        if(action != null && action.equals("view_my_field")){
+        if(action != null && action.equals("view_my_restaurant")){
             Fragment fragment = new OwnerManagerFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, fragment).commit();
-            bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+            bottomNavigationView.setSelectedItemId(R.id.pageManager);
         }else{
             //default fragment
             getSupportFragmentManager().beginTransaction()

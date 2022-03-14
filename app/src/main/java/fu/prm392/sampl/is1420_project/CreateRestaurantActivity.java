@@ -141,7 +141,7 @@ public class CreateRestaurantActivity extends AppCompatActivity {
                     public void onSuccess(Void unused) {
                         prdWait.cancel();
                         Intent intent=new Intent(CreateRestaurantActivity.this,OwnerMainActivity.class);
-                        intent.putExtra("action","view_my_field");
+                        intent.putExtra("action","view_my_restaurant");
                         startActivity(intent);
                         Toast.makeText(CreateRestaurantActivity.this, "Create restaurant successfully", Toast.LENGTH_SHORT).show();
                         finish();
