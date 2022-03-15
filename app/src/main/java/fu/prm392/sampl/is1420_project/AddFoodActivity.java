@@ -3,7 +3,6 @@ package fu.prm392.sampl.is1420_project;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -27,45 +25,42 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import fu.prm392.sampl.is1420_project.dao.FoodDAO;
 import fu.prm392.sampl.is1420_project.dao.RestaurantDAO;
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
+import fu.prm392.sampl.is1420_project.dto.FoodDTO;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
 import fu.prm392.sampl.is1420_project.dto.UserDTO;
 import fu.prm392.sampl.is1420_project.utils.Utils;
 import fu.prm392.sampl.is1420_project.utils.Validation;
 
-public class CreateRestaurantActivity extends AppCompatActivity {
+public class AddFoodActivity extends AppCompatActivity {
 
     public static final int RC_GALLERY = 1000;
-//    public static final int RC_FOOD = 2000;
-    private TextInputLayout etRestaurantName, etLocation;
-    private Button btnChooseImg, btnLocation;
-    private RecyclerView recycleMenu;
+    private TextInputLayout etFoodName, etPrice, etDescription;
+    private Button btnChooseImg;
     private ImageView imgPhoto;
     private Uri uriImg;
     private Utils utils;
     private Validation validation;
     private ProgressDialog prdWait;
-    private RestaurantDTO restaurantDTO;
-    private ImageButton imgBtnAdd;
+    private FoodDTO foodDTO;
+    String restaurantID;
 
     private MaterialToolbar topAppBar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_restaurant);
+        setContentView(R.layout.activity_add_food);
         utils = new Utils();
         validation = new Validation();
-        etRestaurantName = findViewById(R.id.etRestaurantName);
-        etLocation = findViewById(R.id.etLocation);
+        etFoodName = findViewById(R.id.etFoodName);
+        etPrice = findViewById(R.id.etFoodPrice);
+        etDescription = findViewById(R.id.etDescription);
         btnChooseImg = findViewById(R.id.btnChooseImage);
-        btnLocation = findViewById(R.id.btnLocation);
-        recycleMenu = findViewById(R.id.recycleRestaurantView);
         imgPhoto = findViewById(R.id.img_photo);
         topAppBar=findViewById(R.id.topAppBar);
-        imgBtnAdd = findViewById(R.id.imgBtnAdd);
 
         topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +68,13 @@ public class CreateRestaurantActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        Intent intent = this.getIntent();
+        restaurantID = intent.getStringExtra("restaurantID");
+        if (restaurantID == null) {
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         btnChooseImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,17 +84,6 @@ public class CreateRestaurantActivity extends AppCompatActivity {
                 startActivityForResult(gallery, RC_GALLERY);
             }
         });
-
-        //location
-        //menu
-//        imgBtnAdd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(CreateRestaurantActivity.this,AddFoodActivity.class);
-//                intent.putExtra("restaurantID",)
-//                startActivityForResult(intent, RC_FOOD);
-//            }
-//        });
     }
 
     @Override
@@ -112,67 +103,66 @@ public class CreateRestaurantActivity extends AppCompatActivity {
         }
     }
 
-    public void clickCreate(View view){
-        String name = etRestaurantName.getEditText().getText().toString();
-        String location = etLocation.getEditText().getText().toString();
-        if(isValid(name,location)){
-            restaurantDTO = new RestaurantDTO();
-            restaurantDTO.setName(name);
-            restaurantDTO.setLocation(location);
-            restaurantDTO.setStatus("active");
-
+    public void clickAdd(View view){
+        String name = etFoodName.getEditText().getText().toString();
+        double price = Double.parseDouble(etPrice.getEditText().getText().toString());
+        String description = etDescription.getEditText().getText().toString();
+        if(isValid(name,price,description)){
+            foodDTO = new FoodDTO();
+            foodDTO.setName(name);
+            foodDTO.setPrice(price);
+            foodDTO.setDescription(description);
+            foodDTO.setStatus("available");
             prdWait=new ProgressDialog(this);
-            utils.showProgressDialog(prdWait,"Create","Please wait to create restaurant");
+            utils.showProgressDialog(prdWait,"Create","Please wait to add food");
 
             if (uriImg != null) {
                 uploadImageToStorage();
             } else {
-                createRestaurant();
+                addFood();
             }
         }
     }
 
     private void uploadImageToStorage() {
-        RestaurantDAO restaurantDAO = new RestaurantDAO();
-        restaurantDAO.uploadImgToFirebase(uriImg).addOnCompleteListener(new OnCompleteListener<Uri>() {
+        FoodDAO foodDAO = new FoodDAO();
+        foodDAO.uploadImgToFirebase(uriImg).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if(task.isSuccessful()){
                     Uri uri = task.getResult();
-                    restaurantDTO.setImage(uri.toString());
-
-                    createRestaurant();
-                    System.out.println(("URL IMAGE " + restaurantDTO.getImage()));
+                    foodDTO.setImage(uri.toString());
+                    addFood();
+                    System.out.println(("URL IMAGE " + foodDTO.getImage()));
                 } else {
-                    Toast.makeText(CreateRestaurantActivity.this, "upload image fail",
+                    Toast.makeText(AddFoodActivity.this, "upload image fail",
                             Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    private void createRestaurant(){
+    private void addFood() {
+        FoodDAO foodDAO = new FoodDAO();
         RestaurantDAO restaurantDAO = new RestaurantDAO();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        UserDAO userDAO = new UserDAO();
-        userDAO.getUserById(user.getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        restaurantDAO.getRestaurantByID(restaurantID).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                UserDTO owner = documentSnapshot.get("userInfo",UserDTO.class);
-                restaurantDAO.createRestaurant(restaurantDTO,owner).addOnSuccessListener(new OnSuccessListener<Void>() {
+                RestaurantDTO restaurantDTO = documentSnapshot.get("restaurantsInfo",RestaurantDTO.class);
+                foodDAO.addFood(foodDTO,restaurantDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         prdWait.cancel();
-                        Intent intent=new Intent(CreateRestaurantActivity.this,OwnerMainActivity.class);
-                        intent.putExtra("action","view_my_restaurant");
-                        startActivity(intent);
-                        Toast.makeText(CreateRestaurantActivity.this, "Create restaurant successfully", Toast.LENGTH_SHORT).show();
+//                        Intent intent=new Intent(AddFoodActivity.this,OwnerMenuDetailActivity.class);
+//                        intent.putExtra("action","view_my_menu");
+//                        startActivity(intent);
+                        Toast.makeText(AddFoodActivity.this, "Add food successfully", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreateRestaurantActivity.this, "Create Fail" + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddFoodActivity.this, "Add Fail" + e.getMessage(), Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 });
@@ -180,23 +170,29 @@ public class CreateRestaurantActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(CreateRestaurantActivity.this,
-                        "Fail to get user on server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddFoodActivity.this,
+                        "Fail to get restaurant on server", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
-    private boolean isValid(String name, String location){
+    private boolean isValid(String name, double price, String description) {
         boolean result = true;
-        utils.clearError(etRestaurantName);
-        utils.clearError(etLocation);
+        utils.clearError(etFoodName);
+        utils.clearError(etPrice);
+        utils.clearError(etDescription);
 
-        if(validation.isEmpty(location)) {
-            utils.showError(etLocation, "Location must not be blank");
+        if(validation.isEmpty(name)) {
+            utils.showError(etFoodName, "Name must not be blank");
             result = false;
         }
-        if(validation.isEmpty(name)) {
-            utils.showError(etRestaurantName, "Name must not be blank");
+        if(validation.isEmpty(String.valueOf(price))) {
+            utils.showError(etPrice, "Price must not be blank");
+            result = false;
+        }
+        if(validation.isEmpty(description)) {
+            utils.showError(etDescription, "Description must not be blank");
             result = false;
         }
 

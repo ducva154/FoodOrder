@@ -11,6 +11,11 @@
         android:icon="@drawable/ic_baseline_handyman_24"
         android:title="Manager"/>
     <item
+        android:id="@+id/pageMenu"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_handyman_24"
+        android:title="Menu"/>
+    <item
         android:id="@+id/pageAccount"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_account_circle_24"

@@ -13,6 +13,7 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import fu.prm392.sampl.is1420_project.fragments.OwnerHomeFragment;
 import fu.prm392.sampl.is1420_project.fragments.OwnerManagerFragment;
+import fu.prm392.sampl.is1420_project.fragments.OwnerMenuFragment;
 import fu.prm392.sampl.is1420_project.fragments.UserHomeFragment;
 
 public class OwnerMainActivity extends AppCompatActivity {
@@ -50,6 +51,9 @@ public class OwnerMainActivity extends AppCompatActivity {
                         break;
                     case R.id.pageManager:
                         selectedFragment = new OwnerManagerFragment();
+                        break;
+                    case R.id.pageMenu:
+                        selectedFragment = new OwnerMenuFragment();
                         break;
                     default:
                         return false;

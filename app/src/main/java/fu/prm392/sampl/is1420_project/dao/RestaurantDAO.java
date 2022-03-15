@@ -34,7 +34,7 @@ public class RestaurantDAO {
         db = FirebaseFirestore.getInstance();
     }
 
-    public Task<Void> createRestaurent(RestaurantDTO restaurantDTO, UserDTO owner) {
+    public Task<Void> createRestaurant(RestaurantDTO restaurantDTO, UserDTO owner) {
         DocumentReference restaurantReference = db.collection("restaurants").document();
         restaurantDTO.setRestaurantID(restaurantReference.getId());
         WriteBatch batch = db.batch();

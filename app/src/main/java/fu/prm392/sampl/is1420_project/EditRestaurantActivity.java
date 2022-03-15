@@ -1,6 +1,7 @@
 package fu.prm392.sampl.is1420_project;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,12 +44,13 @@ public class EditRestaurantActivity extends AppCompatActivity {
     private Button btnChooseImg, btnLocation, btnUpdateRestaurant, btnDeleteRestaurant;
     private RecyclerView recycleMenu;
     private ImageView imgPhoto;
-    private Uri imgUri;
+    private Uri uriImg;
     private Utils utils;
     private Validation validation;
     private ProgressDialog prdWait;
     private RestaurantDTO restaurantDTO, previousRestaurantDTO;
     private AutoCompleteTextView auComTxtStatus;
+    private MaterialToolbar topAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,14 @@ public class EditRestaurantActivity extends AppCompatActivity {
         recycleMenu = findViewById(R.id.recycleRestaurantView);
         imgPhoto = findViewById(R.id.img_photo);
         auComTxtStatus = findViewById(R.id.auComTxtStatus);
+        topAppBar=findViewById(R.id.topAppBar);
+
+        topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         Intent intent = this.getIntent();
         String restaurantID = intent.getStringExtra("restaurantID");
@@ -121,6 +132,45 @@ public class EditRestaurantActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_GALLERY) {
+            if (resultCode == RESULT_OK) {
+                try {
+                    uriImg = data.getData();
+                    imgPhoto.setImageURI(uriImg);
+                    ProgressDialog progressDialog = new ProgressDialog(EditRestaurantActivity.this);
+                    utils.showProgressDialog(progressDialog, "Uploading ....", "Please wait for uploading image");
+                    uploadImgRestaurant(uriImg);
+                    progressDialog.cancel();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    private void uploadImgRestaurant(Uri uriImg) {
+        try {
+            RestaurantDAO restaurantDAO = new RestaurantDAO();
+            restaurantDAO.uploadImgToFirebase(uriImg).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri uriRes = task.getResult();
+                        restaurantDTO.setImage(uriRes.toString());
+//                        updateRestaurant();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void clickUpdate(View view){
         String name = etRestaurantName.getEditText().getText().toString();
         String location = etLocation.getEditText().getText().toString();
@@ -132,7 +182,7 @@ public class EditRestaurantActivity extends AppCompatActivity {
             restaurantDTO.setStatus(status);
 
             ProgressDialog progressDialog = new ProgressDialog(EditRestaurantActivity.this);
-            utils.showProgressDialog(progressDialog, "Updating ....", "Please wait for update field");
+            utils.showProgressDialog(progressDialog, "Updating ....", "Please wait for update restaurant");
             updateRestaurant();
             progressDialog.cancel();
         }
