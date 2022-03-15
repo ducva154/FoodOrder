@@ -21,6 +21,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import fu.prm392.sampl.is1420_project.EditFoodActivity;
+import fu.prm392.sampl.is1420_project.OwnerMenuDetailActivity;
+import fu.prm392.sampl.is1420_project.RestaurantMenuActivity;
 import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 import fu.prm392.sampl.is1420_project.R;
 import fu.prm392.sampl.is1420_project.adapter.RestaurantAdapter;
@@ -108,15 +111,22 @@ public class UserHomeFragment extends Fragment {
                 try {
                     for (QueryDocumentSnapshot doc: queryDocumentSnapshots) {
                         Log.d("USER", "DocID: " + doc.getId());
-                        Log.d("USER", "Doc: " + doc.get("restaurantInfo",
+                        Log.d("USER", "Doc: " + doc.get("restaurantsInfo",
                                 RestaurantDTO.class));
-                        RestaurantDTO dto = doc.get("restaurantInfo", RestaurantDTO.class);
+                        RestaurantDTO dto = doc.get("restaurantsInfo", RestaurantDTO.class);
                         restaurantDTOList.add(dto);
                     }
                     restaurantAdapter = new RestaurantAdapter(restaurantDTOList, getContext(),
                             new OnItemClickListener() {
                         @Override
                         public void onItemClick(RestaurantDTO item) {
+                            try {
+                                Intent intent = new Intent(getActivity(), RestaurantMenuActivity.class);
+                                intent.putExtra("restaurantID",item.getRestaurantID());
+                                startActivity(intent);
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                     recyclerRestaurantView.setAdapter(restaurantAdapter);

@@ -13,6 +13,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
@@ -21,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fu.prm392.sampl.is1420_project.dto.FoodDTO;
@@ -101,5 +103,11 @@ public class FoodDAO {
                 return null;
             }
         });
+    }
+
+    public Task<QuerySnapshot> getAllFoodByRestaurantID(String restaurantID) {
+        return db.collection("foods").whereEqualTo("restaurantsInfo.restaurantID",restaurantID)
+                .whereEqualTo("foodsInfo.status","available").get();
+
     }
 }

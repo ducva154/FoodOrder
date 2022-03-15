@@ -55,7 +55,7 @@ public class RestaurantDAO {
     }
 
     public Task<QuerySnapshot>getAllRestaurant(){
-        return db.collection("restaurants").get();
+        return db.collection("restaurants").whereEqualTo("restaurantsInfo.status","active").get();
     }
 
     public Task<Uri> uploadImgToFirebase(Uri uriImg) {

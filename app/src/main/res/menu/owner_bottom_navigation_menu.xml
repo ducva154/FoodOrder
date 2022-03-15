@@ -9,12 +9,12 @@
         android:id="@+id/pageManager"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_handyman_24"
-        android:title="Manager"/>
+        android:title="Restaurant Manager"/>
     <item
         android:id="@+id/pageMenu"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_handyman_24"
-        android:title="Menu"/>
+        android:icon="@drawable/ic_baseline_restaurant_menu_24"
+        android:title="Menu Manager"/>
     <item
         android:id="@+id/pageAccount"
         android:enabled="true"

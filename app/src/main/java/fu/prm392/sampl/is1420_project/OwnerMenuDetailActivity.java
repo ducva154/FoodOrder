@@ -50,10 +50,6 @@ public class OwnerMenuDetailActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         restaurantID = intent.getStringExtra("restaurantID");
-//        if (restaurantID == null) {
-//            Toast.makeText(this, "Something went wrong res" + restaurantID, Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
