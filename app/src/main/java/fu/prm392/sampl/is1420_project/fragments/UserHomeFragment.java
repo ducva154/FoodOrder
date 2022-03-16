@@ -1,8 +1,17 @@
 package fu.prm392.sampl.is1420_project.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,10 +20,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -22,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fu.prm392.sampl.is1420_project.EditFoodActivity;
+import fu.prm392.sampl.is1420_project.GoogleMapActivity;
 import fu.prm392.sampl.is1420_project.OwnerMenuDetailActivity;
 import fu.prm392.sampl.is1420_project.RestaurantMenuActivity;
 import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
@@ -37,10 +60,20 @@ import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
  */
 public class UserHomeFragment extends Fragment {
 
-    private RecyclerView recyclerRestaurantView;
+    public static final int RC_LOCATION = 1000;
+    public static final int RC_PERMISSTION_LOCATION = 2500;
+    private RecyclerView recyclerRestaurantView, recycleNearRestaurantView;
     private TextInputLayout etSearch;
+    private Button btnChangeLocation;
+    private TextView txtLocation, txtError;
     private List<RestaurantDTO> restaurantDTOList;
-    private RestaurantAdapter restaurantAdapter;
+    private RestaurantAdapter restaurantAdapter, restaurantNearAdapter;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private GeoPoint geoUser;
+    final double radiusInM = 50 * 1000;
+    private List<RestaurantDTO> restaurantNearList;
+    private CardView cardNearMe;
+    private String locationName;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -87,19 +120,173 @@ public class UserHomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_home, container, false);
-
+        restaurantNearList = new ArrayList<>();
         recyclerRestaurantView = view.findViewById(R.id.recycleRestaurantView);
         etSearch = view.findViewById(R.id.etSearch);
         recyclerRestaurantView.setLayoutManager(new LinearLayoutManager(getContext()));
+        btnChangeLocation = view.findViewById(R.id.btnChangeLocation);
+        txtLocation = view.findViewById(R.id.txtLocation);
+        txtError = view.findViewById(R.id.txtError);
+        cardNearMe = view.findViewById(R.id.cardNearMe);
+        recycleNearRestaurantView = view.findViewById(R.id.recycleNearRestaurantView);
+        recycleNearRestaurantView.setLayoutManager(new LinearLayoutManager(getContext()));
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-
+        btnChangeLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), GoogleMapActivity.class);
+                intent.putExtra("action", "pickLocation");
+                startActivityForResult(intent, RC_LOCATION);
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_LOCATION && resultCode == getActivity().RESULT_OK) {
+            try {
+                double lat = data.getDoubleExtra("lat", 0);
+                double lng = data.getDoubleExtra("lng", 0);
+                if (lat != 0 && lng != 0) {
+                    geoUser = new GeoPoint(lat, lng);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         loadData();
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, RC_PERMISSTION_LOCATION);
+        } else {
+            loadDataNearMe();
+        }
+    }
+
+    private void loadDataNearMe() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        LocationRequest mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(60000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        LocationCallback mLocationCallback = new LocationCallback() {
+        };
+
+        fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+
+        if (geoUser == null) {
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        try {
+                            displayLocation(location.getLatitude(),location.getLongitude());
+                            double lat = location.getLatitude();
+                            double lng = location.getLongitude();
+                            GeoLocation geoLocation = new GeoLocation(lat, lng);
+                            searchNearRestaurant(geoLocation);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        txtError.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        } else {
+            displayLocation(geoUser.getLatitude(), geoUser.getLongitude());
+            GeoLocation geoLocation = new GeoLocation(geoUser.getLatitude(), geoUser.getLongitude());
+            searchNearRestaurant(geoLocation);
+        }
+    }
+
+    private void displayLocation(double latitude, double longitude) {
+        try {
+            Geocoder geocoder = new Geocoder(getContext());
+            List<Address> addresses = null;
+            addresses = geocoder.getFromLocation(latitude,
+                    longitude, 1);
+            Address address = addresses.get(0);
+            locationName = address.getAddressLine(0);
+            Log.d("USER", "location: " + locationName);
+            txtLocation.setText(locationName);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void searchNearRestaurant(GeoLocation geoLocation) {
+        RestaurantDAO restaurantDAO = new RestaurantDAO();
+        // Find restaurant within 50km of user's location
+        List<Task<QuerySnapshot>> tasks = restaurantDAO.searchNearRestaurant(geoLocation, radiusInM);
+        restaurantNearList.clear();
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(new OnCompleteListener<List<Task<?>>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Task<?>>> task) {
+                try {
+                    for (Task<QuerySnapshot> t : tasks) {
+                        QuerySnapshot snap = t.getResult();
+                        for (DocumentSnapshot doc : snap.getDocuments()) {
+                            RestaurantDTO restaurantDTO = doc.get("restaurantsInfo", RestaurantDTO.class);
+                            if (restaurantDTO.getStatus().equals("active")) {
+                                GeoPoint geoPoint = restaurantDTO.getGeoPoint();
+                                double lat = geoPoint.getLatitude();
+                                double lng = geoPoint.getLongitude();
+
+                                GeoLocation docLocation = new GeoLocation(lat, lng);
+                                double distanceInM = GeoFireUtils.getDistanceBetween(docLocation, geoLocation);
+                                if (distanceInM <= radiusInM) {
+                                    //covert to km
+                                    distanceInM = distanceInM / 1000;
+                                    distanceInM = Math.round(distanceInM * 10.0) / 10.0;
+                                    restaurantDTO.setDistance(String.format("%s", distanceInM));
+                                    restaurantNearList.add(restaurantDTO);
+                                    Log.d("distance", distanceInM + "");
+                                }
+                            }
+                        }
+                    }
+                    loadToRecycleView();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void loadToRecycleView() {
+        if (restaurantNearList.isEmpty()) {
+            txtError.setVisibility(View.VISIBLE);
+        } else {
+            txtError.setVisibility(View.GONE);
+            cardNearMe.setVisibility(View.VISIBLE);
+            restaurantNearAdapter = new RestaurantAdapter(restaurantNearList, getActivity(),
+                    new OnItemClickListener() {
+                        @Override
+                        public void onItemClick(RestaurantDTO item) {
+                            try {
+                                Intent intent = new Intent(getActivity(), RestaurantMenuActivity.class);
+                                intent.putExtra("restaurantID", item.getRestaurantID());
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            recycleNearRestaurantView.setAdapter(restaurantNearAdapter);
+        }
     }
 
     private void loadData() {
@@ -109,7 +296,7 @@ public class UserHomeFragment extends Fragment {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 try {
-                    for (QueryDocumentSnapshot doc: queryDocumentSnapshots) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Log.d("USER", "DocID: " + doc.getId());
                         Log.d("USER", "Doc: " + doc.get("restaurantsInfo",
                                 RestaurantDTO.class));
@@ -118,19 +305,19 @@ public class UserHomeFragment extends Fragment {
                     }
                     restaurantAdapter = new RestaurantAdapter(restaurantDTOList, getContext(),
                             new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(RestaurantDTO item) {
-                            try {
-                                Intent intent = new Intent(getActivity(), RestaurantMenuActivity.class);
-                                intent.putExtra("restaurantID",item.getRestaurantID());
-                                startActivity(intent);
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                                @Override
+                                public void onItemClick(RestaurantDTO item) {
+                                    try {
+                                        Intent intent = new Intent(getActivity(), RestaurantMenuActivity.class);
+                                        intent.putExtra("restaurantID", item.getRestaurantID());
+                                        startActivity(intent);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
                     recyclerRestaurantView.setAdapter(restaurantAdapter);
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

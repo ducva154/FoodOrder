@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,11 +47,16 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantViewHolder
         holder.getTxtRestaurantName().setText(list.get(position).getName());
         holder.getTxtLocation().setText(list.get(position).getLocation());
         holder.getTxtRate().setText(String.format("%s", list.get(position).getRate()));
-        if (list.get(position).getImage() != null){
+        if (list.get(position).getImage() != null) {
             Uri uri = Uri.parse(list.get(position).getImage());
             Glide.with(holder.getImgRestaurant().getContext())
                     .load(uri)
                     .into(holder.getImgRestaurant());
+        }
+
+        if (list.get(position).getDistance() != null) {
+            holder.getLnlDistance().setVisibility(View.VISIBLE);
+            holder.getTxtDistance().setText(String.format("%s", list.get(position).getDistance()));
         }
     }
 

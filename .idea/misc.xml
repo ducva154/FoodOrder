@@ -4,13 +4,17 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.151" />
+        <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/drawable/ic_baseline_local_shipping_24.xml" value="0.148" />
+        <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/drawable/ic_baseline_location_on_24.xml" value="0.148" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_add_food.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_create_food.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_create_restaurant.xml" value="0.25" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_edit_food.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_edit_restaurant.xml" value="0.25" />
+        <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_google_map.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_main.xml" value="0.1859375" />
+        <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_maps.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_owner.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_owner_main.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/activity_owner_menu_detail.xml" value="0.2" />
@@ -20,6 +24,7 @@
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/fragment_owner_home.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/fragment_owner_manager.xml" value="0.2" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/fragment_owner_menu.xml" value="0.2" />
+        <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/fragment_pick_location.xml" value="0.1859375" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/fragment_user_home.xml" value="0.25" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/item_menu.xml" value="0.33" />
         <entry key="..\:/Users/drako/Documents/PRM391/IS1420_Project/app/src/main/res/layout/item_restaurant.xml" value="0.25" />

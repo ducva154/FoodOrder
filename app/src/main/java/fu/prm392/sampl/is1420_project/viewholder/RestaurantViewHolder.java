@@ -2,6 +2,7 @@ package fu.prm392.sampl.is1420_project.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,8 +13,10 @@ import fu.prm392.sampl.is1420_project.R;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
 
 public class RestaurantViewHolder extends RecyclerView.ViewHolder {
-    private TextView txtRestaurantName, txtLocation, txtRate;
+    private TextView txtRestaurantName, txtLocation, txtRate, txtDistance;
     private ImageView imgRestaurant;
+    private LinearLayout lnlDistance;
+
 
     public RestaurantViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,6 +24,16 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
         txtLocation = itemView.findViewById(R.id.txtLocation);
         txtRate = itemView.findViewById(R.id.txtRate);
         imgRestaurant = itemView.findViewById(R.id.imgRestaurant);
+        txtDistance= itemView.findViewById(R.id.txtDistance);
+        lnlDistance = itemView.findViewById(R.id.lnlDistance);
+    }
+
+    public TextView getTxtDistance() {
+        return txtDistance;
+    }
+
+    public LinearLayout getLnlDistance() {
+        return lnlDistance;
     }
 
     public ImageView getImgRestaurant() {

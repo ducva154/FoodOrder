@@ -6,6 +6,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.firebase.geofire.GeoFireUtils;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQueryBounds;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -13,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
@@ -21,7 +25,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
@@ -104,5 +110,19 @@ public class RestaurantDAO {
                 return null;
             }
         });
+    }
+
+    public List<Task<QuerySnapshot>> searchNearRestaurant(GeoLocation geoLocation, double radiusInM) {
+        List<GeoQueryBounds> bounds = GeoFireUtils.getGeoHashQueryBounds(geoLocation, radiusInM);
+        final List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+        for (GeoQueryBounds b : bounds) {
+            Query q = db.collection("restaurants")
+                    .orderBy("restaurantsInfo.geoHash")
+                    .startAt(b.startHash)
+                    .endAt(b.endHash);
+            tasks.add(q.get());
+        }
+        // Collect all the query results together into a single list
+        return tasks;
     }
 }

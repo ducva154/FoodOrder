@@ -13,6 +13,7 @@ public class RestaurantDTO implements Serializable {
     private String image;
     private double rate;
     private String status;
+    private String distance;
 
     public RestaurantDTO() {
     }
@@ -26,6 +27,14 @@ public class RestaurantDTO implements Serializable {
         this.image = image;
         this.rate = rate;
         this.status = status;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 
     public String getRestaurantID() {
