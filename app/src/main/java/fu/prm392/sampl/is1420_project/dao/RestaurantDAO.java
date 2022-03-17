@@ -46,7 +46,7 @@ public class RestaurantDAO {
         WriteBatch batch = db.batch();
         Map<String, Object> dataRestaurant = new HashMap<>();
         dataRestaurant.put("restaurantsInfo", restaurantDTO);
-        batch.set(restaurantReference,dataRestaurant, SetOptions.merge());
+        batch.set(restaurantReference, dataRestaurant, SetOptions.merge());
 
         Map<String, Object> dataOwner = new HashMap<>();
         dataOwner.put("ownerInfo", owner);
@@ -60,13 +60,13 @@ public class RestaurantDAO {
         return batch.commit();
     }
 
-    public Task<QuerySnapshot>getAllRestaurant(){
-        return db.collection("restaurants").whereEqualTo("restaurantsInfo.status","active").get();
+    public Task<QuerySnapshot> getAllRestaurant() {
+        return db.collection("restaurants").whereEqualTo("restaurantsInfo.status", "active").get();
     }
 
     public Task<Uri> uploadImgToFirebase(Uri uriImg) {
         StorageReference storageReference = FirebaseStorage.getInstance()
-                .getReference("restaurant_images").child(System.currentTimeMillis()+".png");
+                .getReference("restaurant_images").child(System.currentTimeMillis() + ".png");
         UploadTask uploadTask = storageReference.putFile(uriImg);
         return uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -86,7 +86,6 @@ public class RestaurantDAO {
                 .document(restaurantDTO.getRestaurantID());
         DocumentReference docOwner = db.collection("Users").document(uid);
 
-
         Log.d("USER", "docRestaurantOfOwner: " + docOwner);
         return db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
@@ -97,7 +96,7 @@ public class RestaurantDAO {
                 dataRestaurant.put("restaurantsInfo.location", restaurantDTO.getLocation());
                 dataRestaurant.put("restaurantsInfo.image", restaurantDTO.getImage());
                 dataRestaurant.put("restaurantsInfo.status", restaurantDTO.getStatus());
-                transaction.update(docRestaurant,dataRestaurant);
+                transaction.update(docRestaurant, dataRestaurant);
 
                 Map<String, Object> dataDeleteRestaurant = new HashMap<>();
                 dataDeleteRestaurant.put("restaurantsInfo", FieldValue.arrayRemove(previousRestaurantDTO));

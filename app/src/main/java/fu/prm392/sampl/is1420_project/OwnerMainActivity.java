@@ -26,15 +26,15 @@ public class OwnerMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_owner_main);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        Intent intent=getIntent();
-        String action=intent.getStringExtra("action");
+        Intent intent = getIntent();
+        String action = intent.getStringExtra("action");
 
-        if(action != null && action.equals("view_my_restaurant")){
+        if (action != null && action.equals("view_my_restaurant")) {
             Fragment fragment = new OwnerManagerFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, fragment).commit();
             bottomNavigationView.setSelectedItemId(R.id.pageManager);
-        }else{
+        } else {
             //default fragment
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, new OwnerHomeFragment()).commit();
@@ -44,7 +44,7 @@ public class OwnerMainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
-                switch(item.getItemId()){
+                switch (item.getItemId()) {
                     //check id
                     case R.id.pageHome:
                         selectedFragment = new OwnerHomeFragment();

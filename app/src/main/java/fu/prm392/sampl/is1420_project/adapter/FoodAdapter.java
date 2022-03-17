@@ -48,7 +48,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodViewHolder> {
         holder.getTxtFoodName().setText(list.get(position).getName());
         holder.getTxtDescription().setText(list.get(position).getDescription());
         holder.getTxtPrice().setText(String.format("%s", list.get(position).getPrice()));
-        if (list.get(position).getImage() != null){
+        if (list.get(position).getImage() != null) {
             Uri uri = Uri.parse(list.get(position).getImage());
             Glide.with(holder.getImgFood().getContext())
                     .load(uri)

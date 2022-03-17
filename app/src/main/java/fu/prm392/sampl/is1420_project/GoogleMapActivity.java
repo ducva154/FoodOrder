@@ -37,10 +37,10 @@ public class GoogleMapActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         String action = intent.getStringExtra("action");
 
-        if (action.equals("pickLocation")){
+        if (action.equals("pickLocation")) {
             PickLocationFragment fragment = new PickLocationFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.layoutGoogleMap, fragment).commit();
-        }else {
+        } else {
             Toast.makeText(this, "Location went wrong", Toast.LENGTH_SHORT).show();
             this.setResult(RESULT_CANCELED);
             finish();
@@ -50,7 +50,7 @@ public class GoogleMapActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == RC_PERMISSTION_LOCATION) {
+        if (requestCode == RC_PERMISSTION_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 loadData();
             } else {

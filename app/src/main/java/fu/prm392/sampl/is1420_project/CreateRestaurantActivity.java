@@ -110,13 +110,13 @@ public class CreateRestaurantActivity extends AppCompatActivity {
             try {
                 double lat = data.getDoubleExtra("lat", 0);
                 double lng = data.getDoubleExtra("lng", 0);
-                if(lat != 0 && lng != 0) {
+                if (lat != 0 && lng != 0) {
                     geoPoint = new GeoPoint(lat, lng);
                     geoHash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(lat, lng));
                 }
                 String location = data.getStringExtra("locationName");
                 etLocation.getEditText().setText(location);
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

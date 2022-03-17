@@ -69,7 +69,7 @@ public class PickLocationFragment extends Fragment {
             Log.d("USER", "onMapReady");
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
+            //if user reject permission
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getActivity(), "Map went wrong", Toast.LENGTH_SHORT).show();
@@ -78,6 +78,7 @@ public class PickLocationFragment extends Fragment {
                 return;
             }
 
+            //get current user lcation
             LocationRequest mLocationRequest = LocationRequest.create();
             mLocationRequest.setInterval(60000);
             mLocationRequest.setFastestInterval(5000);
@@ -93,19 +94,12 @@ public class PickLocationFragment extends Fragment {
                     if (location != null) {
                         try {
                             Geocoder geocoder = new Geocoder(getContext());
-                            List<Address> addresses = null;
-
-                            addresses = geocoder.getFromLocation(location.getLatitude(),
+                            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),
                                     location.getLongitude(), 1);
-
                             Address address = addresses.get(0);
-
                             locationName = address.getAddressLine(0);
-
                             Log.d("USER", "location: " + locationName);
-
-                            marker = new LatLng(location.getLatitude(),
-                                    location.getLongitude());
+                            marker = new LatLng(location.getLatitude(), location.getLongitude());
                             //create maker options
                             MarkerOptions options = new MarkerOptions().position(marker).title("My location");
                             //Zoom map
@@ -127,18 +121,13 @@ public class PickLocationFragment extends Fragment {
                     try {
                         marker = latLng;
                         Geocoder geocoder = new Geocoder(getContext());
-                        List<Address> addresses = null;
-
-                        addresses = geocoder.getFromLocation(marker.latitude,
+                        List<Address> addresses = geocoder.getFromLocation(marker.latitude,
                                 marker.longitude, 1);
-
                         Address address = addresses.get(0);
-
                         locationName = address.getAddressLine(0);
                         Log.d("USER", "location: " + locationName);
-
                         googleMap.clear();
-                        MarkerOptions options = new MarkerOptions().position(marker).title("i am here");
+                        MarkerOptions options = new MarkerOptions().position(marker).title("My location");
                         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker, 15));
                         googleMap.addMarker(options);
                     } catch (IOException e) {

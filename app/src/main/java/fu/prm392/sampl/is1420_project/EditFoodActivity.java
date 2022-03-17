@@ -66,7 +66,7 @@ public class EditFoodActivity extends AppCompatActivity {
         auComTxtStatus = findViewById(R.id.auComTxtStatus);
         btnUpdateFood = findViewById(R.id.btnUpdateFood);
         btnDeleteFood = findViewById(R.id.btnDeleteFood);
-        topAppBar=findViewById(R.id.topAppBar);
+        topAppBar = findViewById(R.id.topAppBar);
 
         topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,16 +98,16 @@ public class EditFoodActivity extends AppCompatActivity {
         foodDAO.getFoodByID(foodID).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    foodDTO = doc.get("foodsInfo",FoodDTO.class);
-                    previousFoodDTO = doc.get("foodsInfo",FoodDTO.class);
+                    foodDTO = doc.get("foodsInfo", FoodDTO.class);
+                    previousFoodDTO = doc.get("foodsInfo", FoodDTO.class);
                     Log.d("USER", "dto: " + foodDTO);
 
                     etFoodName.getEditText().setText(foodDTO.getName());
                     etPrice.getEditText().setText(String.format("%s", foodDTO.getPrice()));
                     etDescription.getEditText().setText(foodDTO.getDescription());
-                    auComTxtStatus.setText(foodDTO.getStatus(),false);
+                    auComTxtStatus.setText(foodDTO.getStatus(), false);
 
                     try {
                         Uri uri = Uri.parse(foodDTO.getImage());
@@ -117,11 +117,11 @@ public class EditFoodActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         imgPhoto.setImageResource(R.drawable.image_1);
                     }
-                    if(foodDTO.getStatus().equals("unavailable")){
+                    if (foodDTO.getStatus().equals("unavailable")) {
                         btnDeleteFood.setVisibility(View.GONE);
                     }
 
-                }else{
+                } else {
                     Toast.makeText(EditFoodActivity.this, "Get data failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -175,12 +175,12 @@ public class EditFoodActivity extends AppCompatActivity {
         }
     }
 
-    public void clickUpdate(View view){
+    public void clickUpdate(View view) {
         String name = etFoodName.getEditText().getText().toString();
         Double price = Double.valueOf(etPrice.getEditText().getText().toString());
         String description = etDescription.getEditText().getText().toString();
         String status = etStatus.getEditText().getText().toString();
-        if (isValid(name,price,description,status)){
+        if (isValid(name, price, description, status)) {
             foodDTO.setName(name);
             foodDTO.setPrice(price);
             foodDTO.setDescription(description);
@@ -195,7 +195,7 @@ public class EditFoodActivity extends AppCompatActivity {
 
     private void updateFood() {
         FoodDAO foodDAO = new FoodDAO();
-        foodDAO.updateFood(foodDTO,previousFoodDTO,restaurantID)
+        foodDAO.updateFood(foodDTO, previousFoodDTO, restaurantID)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -221,15 +221,15 @@ public class EditFoodActivity extends AppCompatActivity {
         utils.clearError(etDescription);
         utils.clearError(etStatus);
 
-        if(validation.isEmpty(name)) {
+        if (validation.isEmpty(name)) {
             utils.showError(etFoodName, "Name must not be blank");
             result = false;
         }
-        if(validation.isEmpty(String.valueOf(price))) {
+        if (validation.isEmpty(String.valueOf(price))) {
             utils.showError(etPrice, "Price must not be blank");
             result = false;
         }
-        if(validation.isEmpty(description)) {
+        if (validation.isEmpty(description)) {
             utils.showError(etDescription, "Description must not be blank");
             result = false;
         }

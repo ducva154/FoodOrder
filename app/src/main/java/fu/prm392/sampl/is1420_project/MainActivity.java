@@ -30,35 +30,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        RestaurantDAO restaurantDAO = new RestaurantDAO();
-//        RestaurantDTO restaurantDTO = new RestaurantDTO();
-//        restaurantDTO.setName("My second restaurant");
-//        restaurantDTO.setLocation("22 Hoan Kiem, Hanoi");
-//        restaurantDTO.setRate(4.5);
-//        restaurantDTO.setImage("https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8cmVzdGF1cmFudHN8ZW58MHx8MHx8&w=1000&q=80");
-//        restaurantDAO.createRestaurent(restaurantDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void unused) {
-//                Toast.makeText(MainActivity.this, "thanh cong", Toast.LENGTH_SHORT).show();
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(MainActivity.this, "that bai", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         setContentView(R.layout.activity_main);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         loadUI(user);
-        
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
-                switch(item.getItemId()){
+                switch (item.getItemId()) {
                     //check id
                     case R.id.pageHome:
                         selectedFragment = new UserHomeFragment();
@@ -81,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
         userDAO.getUserById(user.getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String role =documentSnapshot.getString("userInfo.role");
+                String role = documentSnapshot.getString("userInfo.role");
                 Log.d("USER", "role: " + role);
-                switch (role){
+                switch (role) {
                     case "owner":
                         Intent intent = new Intent(MainActivity.this, OwnerMainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -68,7 +68,7 @@ public class EditRestaurantActivity extends AppCompatActivity {
         recycleMenu = findViewById(R.id.recycleRestaurantView);
         imgPhoto = findViewById(R.id.img_photo);
         auComTxtStatus = findViewById(R.id.auComTxtStatus);
-        topAppBar=findViewById(R.id.topAppBar);
+        topAppBar = findViewById(R.id.topAppBar);
 
         topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +95,7 @@ public class EditRestaurantActivity extends AppCompatActivity {
         restaurantDAO.getRestaurantByID(restaurantID).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
                     restaurantDTO = doc.get("restaurantsInfo", RestaurantDTO.class);
                     previousRestaurantDTO = doc.get("restaurantsInfo", RestaurantDTO.class);
@@ -103,7 +103,7 @@ public class EditRestaurantActivity extends AppCompatActivity {
 
                     etRestaurantName.getEditText().setText(restaurantDTO.getName());
                     etLocation.getEditText().setText(restaurantDTO.getLocation());
-                    auComTxtStatus.setText(restaurantDTO.getStatus(),false);
+                    auComTxtStatus.setText(restaurantDTO.getStatus(), false);
 
                     try {
                         Uri uri = Uri.parse(restaurantDTO.getImage());
@@ -113,10 +113,10 @@ public class EditRestaurantActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         imgPhoto.setImageResource(R.drawable.image_1);
                     }
-                    if(restaurantDTO.getStatus().equals("inactive")){
+                    if (restaurantDTO.getStatus().equals("inactive")) {
                         btnDeleteRestaurant.setVisibility(View.GONE);
                     }
-                }else{
+                } else {
                     Toast.makeText(EditRestaurantActivity.this, "Get data failed", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -171,12 +171,12 @@ public class EditRestaurantActivity extends AppCompatActivity {
 
     }
 
-    public void clickUpdate(View view){
+    public void clickUpdate(View view) {
         String name = etRestaurantName.getEditText().getText().toString();
         String location = etLocation.getEditText().getText().toString();
         String status = auComTxtStatus.getText().toString();
 
-        if(isValid(name,location,status)){
+        if (isValid(name, location, status)) {
             restaurantDTO.setName(name);
             restaurantDTO.setLocation(location);
             restaurantDTO.setStatus(status);
@@ -191,13 +191,13 @@ public class EditRestaurantActivity extends AppCompatActivity {
     private void updateRestaurant() {
         RestaurantDAO restaurantDAO = new RestaurantDAO();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        restaurantDAO.updateRestaurant(restaurantDTO,previousRestaurantDTO,user.getUid())
+        restaurantDAO.updateRestaurant(restaurantDTO, previousRestaurantDTO, user.getUid())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Intent intent=new Intent(EditRestaurantActivity.this,OwnerMainActivity.class);
-                            intent.putExtra("action","view_my_restaurant");
+                            Intent intent = new Intent(EditRestaurantActivity.this, OwnerMainActivity.class);
+                            intent.putExtra("action", "view_my_restaurant");
                             startActivity(intent);
                             Toast.makeText(EditRestaurantActivity.this, "Update restaurant success",
                                     Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class EditRestaurantActivity extends AppCompatActivity {
                 });
     }
 
-    public void clickDelete(View view){
+    public void clickDelete(View view) {
         AlertDialog.Builder alert = new AlertDialog.Builder(EditRestaurantActivity.this);
         alert.setTitle("Delete restaurant");
         alert.setMessage("Are you sure you want to delete?");

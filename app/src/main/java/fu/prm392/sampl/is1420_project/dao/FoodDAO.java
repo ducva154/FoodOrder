@@ -37,7 +37,7 @@ public class FoodDAO {
 
     public Task<Uri> uploadImgToFirebase(Uri uriImg) {
         StorageReference storageReference = FirebaseStorage.getInstance()
-                .getReference("food_images").child(System.currentTimeMillis()+".png");
+                .getReference("food_images").child(System.currentTimeMillis() + ".png");
         UploadTask uploadTask = storageReference.putFile(uriImg);
         return uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
@@ -51,9 +51,9 @@ public class FoodDAO {
         DocumentReference foodReference = db.collection("foods").document();
         foodDTO.setFoodID(foodReference.getId());
         WriteBatch batch = db.batch();
-        Map<String,Object> dataFood = new HashMap<>();
+        Map<String, Object> dataFood = new HashMap<>();
         dataFood.put("foodsInfo", foodDTO);
-        batch.set(foodReference,dataFood, SetOptions.merge());
+        batch.set(foodReference, dataFood, SetOptions.merge());
 
         Map<String, Object> dataRestaurant = new HashMap<>();
         dataRestaurant.put("restaurantsInfo", restaurantDTO);
@@ -85,20 +85,20 @@ public class FoodDAO {
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                 Map<String, Object> dataFood = new HashMap<>();
-                dataFood.put("foodsInfo.name",foodDTO.getName());
-                dataFood.put("foodsInfo.price",foodDTO.getPrice());
-                dataFood.put("foodsInfo.description",foodDTO.getDescription());
-                dataFood.put("foodsInfo.image",foodDTO.getImage());
-                dataFood.put("foodsInfo.status",foodDTO.getStatus());
-                transaction.update(docFood,dataFood);
+                dataFood.put("foodsInfo.name", foodDTO.getName());
+                dataFood.put("foodsInfo.price", foodDTO.getPrice());
+                dataFood.put("foodsInfo.description", foodDTO.getDescription());
+                dataFood.put("foodsInfo.image", foodDTO.getImage());
+                dataFood.put("foodsInfo.status", foodDTO.getStatus());
+                transaction.update(docFood, dataFood);
 
-                Map<String,Object> dataDeleteFood = new HashMap<>();
+                Map<String, Object> dataDeleteFood = new HashMap<>();
                 dataDeleteFood.put("foodsInfo", FieldValue.arrayRemove(previousFoodDTO));
-                transaction.update(docRestaurant,dataDeleteFood);
+                transaction.update(docRestaurant, dataDeleteFood);
 
-                Map<String,Object> dataUpdateFood = new HashMap<>();
+                Map<String, Object> dataUpdateFood = new HashMap<>();
                 dataUpdateFood.put("foodsInfo", FieldValue.arrayUnion(foodDTO));
-                transaction.update(docRestaurant,dataUpdateFood);
+                transaction.update(docRestaurant, dataUpdateFood);
 
                 return null;
             }
@@ -106,8 +106,8 @@ public class FoodDAO {
     }
 
     public Task<QuerySnapshot> getAllFoodByRestaurantID(String restaurantID) {
-        return db.collection("foods").whereEqualTo("restaurantsInfo.restaurantID",restaurantID)
-                .whereEqualTo("foodsInfo.status","available").get();
+        return db.collection("foods").whereEqualTo("restaurantsInfo.restaurantID", restaurantID)
+                .whereEqualTo("foodsInfo.status", "available").get();
 
     }
 }

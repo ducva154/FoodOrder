@@ -27,7 +27,7 @@ import fu.prm392.sampl.is1420_project.utils.Validation;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private TextInputLayout etEmail,etPassword;
+    private TextInputLayout etEmail, etPassword;
     private Utils utils;
     private Validation validation;
     private FirebaseAuth auth;
@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void login(View view){
+    public void login(View view) {
         String email = etEmail.getEditText().getText().toString();
         String password = etPassword.getEditText().getText().toString();
         if (isValidLogin(email, password)) {
@@ -64,9 +64,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(AuthResult authResult) {
                 Log.d("Email", "signInWithEmail:success");
                 FirebaseUser user = auth.getCurrentUser();
-                if(user.isEmailVerified()){
+                if (user.isEmailVerified()) {
                     load(user);
-                }else{
+                } else {
                     Toast.makeText(LoginActivity.this, "Please verify your email address",
                             Toast.LENGTH_SHORT).show();
                     prdLogin.cancel();
@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String role = documentSnapshot.getString("userInfo.role");
-                switch (role){
+                switch (role) {
                     case "user": {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -98,22 +98,6 @@ public class LoginActivity extends AppCompatActivity {
                         break;
                     }
                     case "owner": {
-                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-                            @Override
-                            public void onComplete(@NonNull Task<String> task) {
-                                if (!task.isSuccessful()) {
-                                    Log.w("Fetch Token Error", "Fetching FCM registration token failed", task.getException());
-                                    return;
-                                }
-                                String token = task.getResult();
-                                UserDAO userDAO = new UserDAO();
-                                try {
-                                    userDAO.saveToken(token, user.getUid());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
                         Intent intent = new Intent(LoginActivity.this, OwnerMainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

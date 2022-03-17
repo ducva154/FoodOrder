@@ -99,7 +99,7 @@ public class OwnerMenuFragment extends Fragment {
                 List<RestaurantDTO> restaurantDTOList = documentSnapshot
                         .toObject(UserDocument.class).getRestaurantsInfo();
                 Log.d("USER", "dto: " + restaurantDTOList);
-                if (restaurantDTOList != null){
+                if (restaurantDTOList != null) {
                     RestaurantAdapter restaurantAdapter = new RestaurantAdapter(restaurantDTOList
                             , getActivity(), new OnItemClickListener() {
                         @Override
@@ -108,7 +108,7 @@ public class OwnerMenuFragment extends Fragment {
                                 Intent intent = new Intent(getActivity(), OwnerMenuDetailActivity.class);
                                 intent.putExtra("restaurantID", item.getRestaurantID());
                                 startActivity(intent);
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }

@@ -60,7 +60,7 @@ public class AddFoodActivity extends AppCompatActivity {
         etDescription = findViewById(R.id.etDescription);
         btnChooseImg = findViewById(R.id.btnChooseImage);
         imgPhoto = findViewById(R.id.img_photo);
-        topAppBar=findViewById(R.id.topAppBar);
+        topAppBar = findViewById(R.id.topAppBar);
 
         topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,18 +103,18 @@ public class AddFoodActivity extends AppCompatActivity {
         }
     }
 
-    public void clickAdd(View view){
+    public void clickAdd(View view) {
         String name = etFoodName.getEditText().getText().toString();
         double price = Double.parseDouble(etPrice.getEditText().getText().toString());
         String description = etDescription.getEditText().getText().toString();
-        if(isValid(name,price,description)){
+        if (isValid(name, price, description)) {
             foodDTO = new FoodDTO();
             foodDTO.setName(name);
             foodDTO.setPrice(price);
             foodDTO.setDescription(description);
             foodDTO.setStatus("available");
-            prdWait=new ProgressDialog(this);
-            utils.showProgressDialog(prdWait,"Create","Please wait to add food");
+            prdWait = new ProgressDialog(this);
+            utils.showProgressDialog(prdWait, "Create", "Please wait to add food");
 
             if (uriImg != null) {
                 uploadImageToStorage();
@@ -129,7 +129,7 @@ public class AddFoodActivity extends AppCompatActivity {
         foodDAO.uploadImgToFirebase(uriImg).addOnCompleteListener(new OnCompleteListener<Uri>() {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Uri uri = task.getResult();
                     foodDTO.setImage(uri.toString());
                     addFood();
@@ -148,14 +148,11 @@ public class AddFoodActivity extends AppCompatActivity {
         restaurantDAO.getRestaurantByID(restaurantID).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                RestaurantDTO restaurantDTO = documentSnapshot.get("restaurantsInfo",RestaurantDTO.class);
-                foodDAO.addFood(foodDTO,restaurantDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
+                RestaurantDTO restaurantDTO = documentSnapshot.get("restaurantsInfo", RestaurantDTO.class);
+                foodDAO.addFood(foodDTO, restaurantDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         prdWait.cancel();
-//                        Intent intent=new Intent(AddFoodActivity.this,OwnerMenuDetailActivity.class);
-//                        intent.putExtra("action","view_my_menu");
-//                        startActivity(intent);
                         Toast.makeText(AddFoodActivity.this, "Add food successfully", Toast.LENGTH_SHORT).show();
                         finish();
                     }
@@ -183,15 +180,15 @@ public class AddFoodActivity extends AppCompatActivity {
         utils.clearError(etPrice);
         utils.clearError(etDescription);
 
-        if(validation.isEmpty(name)) {
+        if (validation.isEmpty(name)) {
             utils.showError(etFoodName, "Name must not be blank");
             result = false;
         }
-        if(validation.isEmpty(String.valueOf(price))) {
+        if (validation.isEmpty(String.valueOf(price))) {
             utils.showError(etPrice, "Price must not be blank");
             result = false;
         }
-        if(validation.isEmpty(description)) {
+        if (validation.isEmpty(description)) {
             utils.showError(etDescription, "Description must not be blank");
             result = false;
         }

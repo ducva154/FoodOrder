@@ -24,7 +24,7 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
         txtLocation = itemView.findViewById(R.id.txtLocation);
         txtRate = itemView.findViewById(R.id.txtRate);
         imgRestaurant = itemView.findViewById(R.id.imgRestaurant);
-        txtDistance= itemView.findViewById(R.id.txtDistance);
+        txtDistance = itemView.findViewById(R.id.txtDistance);
         lnlDistance = itemView.findViewById(R.id.lnlDistance);
     }
 
@@ -55,7 +55,8 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(RestaurantDTO restaurantDTO, OnItemClickListener listener) {
         itemView.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 listener.onItemClick(restaurantDTO);
             }
         });

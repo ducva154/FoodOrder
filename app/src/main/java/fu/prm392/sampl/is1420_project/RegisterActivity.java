@@ -29,11 +29,12 @@ import fu.prm392.sampl.is1420_project.utils.Validation;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputLayout etName,etEmail,etPassword,etRepassword,etPhone,etAddress;
+    private TextInputLayout etName, etEmail, etPassword, etRepassword, etPhone, etAddress;
     private Utils utils;
     private Validation validation;
     private ProgressDialog prdRegister;
     private FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,17 +51,17 @@ public class RegisterActivity extends AppCompatActivity {
         etAddress = findViewById(R.id.etAddress);
     }
 
-    public void createAccount(View view){
+    public void createAccount(View view) {
         String name = etName.getEditText().getText().toString();
         String email = etEmail.getEditText().getText().toString();
         String password = etPassword.getEditText().getText().toString();
         String repassword = etRepassword.getEditText().getText().toString();
         String phone = etPhone.getEditText().getText().toString();
         String address = etAddress.getEditText().getText().toString();
-        if(isValid(name,email,password,repassword,phone,address)){
+        if (isValid(name, email, password, repassword, phone, address)) {
             utils.showProgressDialog(prdRegister, "Register", "Wait for register");
             signUpWithEmail(email, password);
-        }else{
+        } else {
 
         }
     }
@@ -75,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String name = etName.getEditText().getText().toString();
                 String phone = etPhone.getEditText().getText().toString();
                 String address = etAddress.getEditText().getText().toString();
-                UserDTO userDTO = new UserDTO(user.getUid(),user.getEmail(),name,"user","active",phone,address);
+                UserDTO userDTO = new UserDTO(user.getUid(), user.getEmail(), name, "user", "active", phone, address);
                 userDAO.createUser(userDTO);
                 sendEmailVerification();
                 load(user);
@@ -123,27 +124,27 @@ public class RegisterActivity extends AppCompatActivity {
         utils.clearError(etAddress);
 
         boolean result = true;
-        if (validation.isEmpty(name)){
+        if (validation.isEmpty(name)) {
             utils.showError(etName, "Please enter your name");
             result = false;
         }
-        if (!validation.isValidEmail(email)){
+        if (!validation.isValidEmail(email)) {
             utils.showError(etEmail, "Email is invalid or empty");
             result = false;
         }
-        if (!validation.isValidPassword(password)){
+        if (!validation.isValidPassword(password)) {
             utils.showError(etPassword, "Password must be more than 8 characters");
             result = false;
         }
-        if (validation.isEmpty(repassword)||!repassword.equals(password)){
+        if (validation.isEmpty(repassword) || !repassword.equals(password)) {
             utils.showError(etRepassword, "Password must be a match");
             result = false;
         }
-        if (validation.isEmpty(phone)){
+        if (validation.isEmpty(phone)) {
             utils.showError(etPhone, "Please enter your phone number");
             result = false;
         }
-        if (validation.isEmpty(address)){
+        if (validation.isEmpty(address)) {
             utils.showError(etAddress, "Please enter your address");
             result = false;
         }

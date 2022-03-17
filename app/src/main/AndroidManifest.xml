@@ -32,10 +32,6 @@
             android:value="AIzaSyBSZa18nZIGAd9sUueuYZT88xWuf7bRjzA" />
 
         <activity
-            android:name=".MapsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
-        <activity
             android:name=".EditFoodActivity"
             android:exported="false" />
         <activity
