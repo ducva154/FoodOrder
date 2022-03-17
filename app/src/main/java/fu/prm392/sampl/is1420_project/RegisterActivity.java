@@ -1,26 +1,21 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.dto.UserDTO;
@@ -29,7 +24,7 @@ import fu.prm392.sampl.is1420_project.utils.Validation;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private TextInputLayout etName, etEmail, etPassword, etRepassword, etPhone, etAddress;
+    private TextInputLayout etName, etEmail, etPassword, etRepassword, etPhone;
     private Utils utils;
     private Validation validation;
     private ProgressDialog prdRegister;
@@ -48,7 +43,6 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etRepassword = findViewById(R.id.etRePassword);
         etPhone = findViewById(R.id.etPhone);
-        etAddress = findViewById(R.id.etAddress);
     }
 
     public void createAccount(View view) {
@@ -57,8 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getEditText().getText().toString();
         String repassword = etRepassword.getEditText().getText().toString();
         String phone = etPhone.getEditText().getText().toString();
-        String address = etAddress.getEditText().getText().toString();
-        if (isValid(name, email, password, repassword, phone, address)) {
+        if (isValid(name, email, password, repassword, phone)) {
             utils.showProgressDialog(prdRegister, "Register", "Wait for register");
             signUpWithEmail(email, password);
         } else {
@@ -75,8 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                 UserDAO userDAO = new UserDAO();
                 String name = etName.getEditText().getText().toString();
                 String phone = etPhone.getEditText().getText().toString();
-                String address = etAddress.getEditText().getText().toString();
-                UserDTO userDTO = new UserDTO(user.getUid(), user.getEmail(), name, "user", "active", phone, address);
+                UserDTO userDTO = new UserDTO(user.getUid(), user.getEmail(), name, "user", "active", phone);
                 userDAO.createUser(userDTO);
                 sendEmailVerification();
                 load(user);
@@ -115,13 +107,12 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isValid(String name, String email, String password, String repassword, String phone, String address) {
+    private boolean isValid(String name, String email, String password, String repassword, String phone) {
         utils.clearError(etName);
         utils.clearError(etEmail);
         utils.clearError(etPassword);
         utils.clearError(etRepassword);
         utils.clearError(etPhone);
-        utils.clearError(etAddress);
 
         boolean result = true;
         if (validation.isEmpty(name)) {
@@ -144,11 +135,6 @@ public class RegisterActivity extends AppCompatActivity {
             utils.showError(etPhone, "Please enter your phone number");
             result = false;
         }
-        if (validation.isEmpty(address)) {
-            utils.showError(etAddress, "Please enter your address");
-            result = false;
-        }
-
         return result;
     }
 }

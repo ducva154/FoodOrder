@@ -1,16 +1,14 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -18,9 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-import fu.prm392.sampl.is1420_project.dao.RestaurantDAO;
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
-import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
+import fu.prm392.sampl.is1420_project.fragments.ProfileFragment;
 import fu.prm392.sampl.is1420_project.fragments.UserHomeFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
                     //check id
                     case R.id.pageHome:
                         selectedFragment = new UserHomeFragment();
+                        break;
+                    case R.id.pageAccount:
+                        selectedFragment = new ProfileFragment();
                         break;
                     default:
                         return false;

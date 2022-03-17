@@ -1,12 +1,12 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -14,7 +14,7 @@ import com.google.android.material.navigation.NavigationBarView;
 import fu.prm392.sampl.is1420_project.fragments.OwnerHomeFragment;
 import fu.prm392.sampl.is1420_project.fragments.OwnerManagerFragment;
 import fu.prm392.sampl.is1420_project.fragments.OwnerMenuFragment;
-import fu.prm392.sampl.is1420_project.fragments.UserHomeFragment;
+import fu.prm392.sampl.is1420_project.fragments.ProfileFragment;
 
 public class OwnerMainActivity extends AppCompatActivity {
 
@@ -54,6 +54,9 @@ public class OwnerMainActivity extends AppCompatActivity {
                         break;
                     case R.id.pageMenu:
                         selectedFragment = new OwnerMenuFragment();
+                        break;
+                    case R.id.pageAccount:
+                        selectedFragment = new ProfileFragment();
                         break;
                     default:
                         return false;

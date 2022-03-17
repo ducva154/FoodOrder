@@ -1,11 +1,10 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class WelcomeActivity extends AppCompatActivity {
 
@@ -15,10 +14,12 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
     }
 
+    //go to login activity
     public void login(View view) {
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
     }
 
+    //go to register activity
     public void register(View view) {
         startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
     }
