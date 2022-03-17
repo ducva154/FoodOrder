@@ -1,9 +1,5 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,22 +11,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import fu.prm392.sampl.is1420_project.dao.FoodDAO;
 import fu.prm392.sampl.is1420_project.dao.RestaurantDAO;
-import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.dto.FoodDTO;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
-import fu.prm392.sampl.is1420_project.dto.UserDTO;
 import fu.prm392.sampl.is1420_project.utils.Utils;
 import fu.prm392.sampl.is1420_project.utils.Validation;
 
@@ -174,6 +170,7 @@ public class AddFoodActivity extends AppCompatActivity {
 
     }
 
+    //check valid
     private boolean isValid(String name, double price, String description) {
         boolean result = true;
         utils.clearError(etFoodName);
