@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -94,5 +95,16 @@ public class UserDAO {
                 return mStoreRef.getDownloadUrl();
             }
         });
+    }
+
+    public Task<QuerySnapshot> getAllUser() {
+        return db.collection("Users").get();
+    }
+
+    public Task<Void> deleteUser(String userID) {
+        DocumentReference doc = db.collection("Users").document(userID);
+        Map<String, Object> data = new HashMap<>();
+        data.put("userInfo.status", "inactive");
+        return doc.update(data);
     }
 }

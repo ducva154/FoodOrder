@@ -1,8 +1,5 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,16 +7,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.utils.Utils;
@@ -104,8 +101,13 @@ public class LoginActivity extends AppCompatActivity {
                         LoginActivity.this.finish();
                         break;
                     }
-                    case "admin":
+                    case "admin": {
+                        Intent intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        LoginActivity.this.finish();
                         break;
+                    }
                     default:
                         Toast.makeText(LoginActivity.this, "Your role is invalid",
                                 Toast.LENGTH_LONG).show();
