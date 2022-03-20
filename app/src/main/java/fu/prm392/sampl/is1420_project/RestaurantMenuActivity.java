@@ -1,25 +1,26 @@
 package fu.prm392.sampl.is1420_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -28,11 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fu.prm392.sampl.is1420_project.adapter.FoodAdapter;
+import fu.prm392.sampl.is1420_project.dao.CartDAO;
 import fu.prm392.sampl.is1420_project.dao.FoodDAO;
 import fu.prm392.sampl.is1420_project.dao.RestaurantDAO;
+import fu.prm392.sampl.is1420_project.dao.UserDAO;
+import fu.prm392.sampl.is1420_project.dto.BasketDTO;
+import fu.prm392.sampl.is1420_project.dto.CartDocument;
 import fu.prm392.sampl.is1420_project.dto.FoodDTO;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
-import fu.prm392.sampl.is1420_project.dto.RestaurantDocument;
 import fu.prm392.sampl.is1420_project.listener.OnItemFoodClickListener;
 
 public class RestaurantMenuActivity extends AppCompatActivity {
@@ -43,7 +47,9 @@ public class RestaurantMenuActivity extends AppCompatActivity {
     private String restaurantID;
     private FloatingActionButton btnBack;
     private RestaurantDTO restaurantDTO;
+    private BasketDTO basketDTO;
     private List<FoodDTO> foodDTOList;
+    private Button btnCart;
 
 
     @Override
@@ -56,6 +62,7 @@ public class RestaurantMenuActivity extends AppCompatActivity {
         recycleMenuView = findViewById(R.id.recycleMenuView);
         imgRestaurant = findViewById(R.id.imgRestaurant);
         btnBack = findViewById(R.id.btnBack);
+        btnCart = findViewById(R.id.btnCart);
         recycleMenuView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -69,8 +76,46 @@ public class RestaurantMenuActivity extends AppCompatActivity {
         restaurantID = intent.getStringExtra("restaurantID");
         if (restaurantID != null) {
             loadData(restaurantID);
+            loadCart();
         }
+
     }
+
+    private void loadCart() {
+        UserDAO userDAO = new UserDAO();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        CartDAO cartDAO = new CartDAO();
+        cartDAO.getCartByUserID(user.getUid()).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (!queryDocumentSnapshots.isEmpty()) {
+                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                    CartDocument cartDocument = doc.toObject(CartDocument.class);
+                    for (BasketDTO basketDTO : cartDocument.getBasketsInfo()) {
+                        if (basketDTO.getRestaurantsInfo().getRestaurantID().equals(restaurantID)) {
+                            btnCart.setVisibility(View.VISIBLE);
+                            btnCart.setText("Basket - " + basketDTO.getBasketQuantity() + " items - " + basketDTO.getBasketPrice());
+                        }
+                    }
+                }
+            }
+        });
+
+//        OrderDAO orderDAO = new OrderDAO();
+//        orderDAO.getOrderByRestaurantID(restaurantID).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                orderDTO = new OrderDTO();
+//                if(!queryDocumentSnapshots.isEmpty()){
+//                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+//                    orderDTO = doc.toObject(OrderDTO.class);
+//                    btnCart.setVisibility(View.VISIBLE);
+//                    btnCart.setText("Cart - "+orderDTO.get);
+//                }
+//            }
+//        });
+    }
+
 
     private void loadData(String restaurantID) {
         RestaurantDAO restaurantDAO = new RestaurantDAO();
@@ -106,7 +151,7 @@ public class RestaurantMenuActivity extends AppCompatActivity {
                             public void onItemClick(FoodDTO item) {
                                 try {
                                     Intent intent = new Intent(RestaurantMenuActivity.this
-                                            , EditFoodActivity.class);
+                                            , FoodDetailActivity.class);
                                     intent.putExtra("foodID", item.getFoodID());
                                     intent.putExtra("restaurantID", restaurantID);
                                     startActivity(intent);

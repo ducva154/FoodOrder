@@ -107,4 +107,9 @@ public class UserDAO {
         data.put("userInfo.status", "inactive");
         return doc.update(data);
     }
+
+    public Task<QuerySnapshot> getCart(String userID) {
+        return db.collection("Users").document(userID).collection("cart").get();
+    }
+
 }

@@ -9,6 +9,8 @@ public class FoodDTO implements Serializable {
     private String description;
     private String image;
     private String status;
+    private int foodQuantity;
+    private double foodTotalPrice;
 
     public FoodDTO() {
     }
@@ -68,6 +70,22 @@ public class FoodDTO implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getFoodQuantity() {
+        return foodQuantity;
+    }
+
+    public void setFoodQuantity(int foodQuantity) {
+        this.foodQuantity = foodQuantity;
+    }
+
+    public double getFoodTotalPrice() {
+        return foodTotalPrice;
+    }
+
+    public void setFoodTotalPrice(double foodTotalPrice) {
+        this.foodTotalPrice = foodTotalPrice;
     }
 
     @Override
