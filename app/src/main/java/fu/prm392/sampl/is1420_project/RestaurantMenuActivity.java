@@ -68,7 +68,9 @@ public class RestaurantMenuActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                Intent intent = new Intent(RestaurantMenuActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 

@@ -55,7 +55,7 @@ public class FoodDetailActivity extends AppCompatActivity {
     private Task<DocumentReference> ref;
     private BasketItemDTO basketItemDTO, preBasketItem;
     private BasketDTO basketDTO, preBasket;
-    private CartDTO cartDTO;
+    private CartDTO cartDTO, preCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,9 @@ public class FoodDetailActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                Intent intent = new Intent(FoodDetailActivity.this, RestaurantMenuActivity.class);
+                intent.putExtra("restaurantID", restaurantID);
+                startActivity(intent);
             }
         });
 
@@ -168,6 +170,7 @@ public class FoodDetailActivity extends AppCompatActivity {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                     CartDocument cartDocument = doc.toObject(CartDocument.class);
+                    preCart = doc.toObject(CartDocument.class).getCartsInfo();
                     cartDTO = cartDocument.getCartsInfo();
                     BasketDAO basketDAO = new BasketDAO();
                     basketDAO.getBasketByRestaurantID(restaurantID).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -185,15 +188,17 @@ public class FoodDetailActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                                 if (!queryDocumentSnapshots.isEmpty()) {
-                                                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                                                    basketItemDocumentAvailable = doc.toObject(BasketItemDocument.class);
-                                                    if (basketItemDocumentAvailable.getFoodsInfo().getFoodID().equals(foodID)) {
-                                                        basketItemDTO = basketItemDocumentAvailable.getBasketItemsInfo();
-                                                        preBasketItem = doc.toObject(BasketItemDocument.class).getBasketItemsInfo();
-                                                        price = basketItemDocumentAvailable.getBasketItemsInfo().getPrice();
-                                                        quantity = basketItemDocumentAvailable.getBasketItemsInfo().getQuantity();
-                                                        txtQuantity.setText(String.format("%d", quantity));
-                                                        btnAddToCart.setText(String.format("Add To Cart - %s", price));
+                                                    List<DocumentSnapshot> doc = queryDocumentSnapshots.getDocuments();
+                                                    for (DocumentSnapshot d : doc) {
+                                                        basketItemDocumentAvailable = d.toObject(BasketItemDocument.class);
+                                                        if (basketItemDocumentAvailable.getFoodsInfo().getFoodID().equals(foodID)) {
+                                                            basketItemDTO = basketItemDocumentAvailable.getBasketItemsInfo();
+                                                            preBasketItem = d.toObject(BasketItemDocument.class).getBasketItemsInfo();
+                                                            price = basketItemDocumentAvailable.getBasketItemsInfo().getPrice();
+                                                            quantity = basketItemDocumentAvailable.getBasketItemsInfo().getQuantity();
+                                                            txtQuantity.setText(String.format("%d", quantity));
+                                                            btnAddToCart.setText(String.format("Add To Cart - %s", price));
+                                                        }
                                                     }
                                                 }
                                             }
@@ -229,8 +234,78 @@ public class FoodDetailActivity extends AppCompatActivity {
     }
 
     private void addToCart() {
-        //new item add to cart
-        if (basketItemDocumentAvailable == null) {
+        if (preBasket != null && preBasketItem == null) {
+            //different item so update it
+            basketItemDTO = new BasketItemDTO();
+            basketItemDTO.setQuantity(quantity);
+            basketItemDTO.setPrice(price);
+            double totalPrice = 0;
+            int totalQuantity = 0;
+            for (BasketItemDTO list : basketDocumentAvailable.getBasketItemsInfo()) {
+                totalPrice += list.getPrice();
+                totalQuantity += list.getQuantity();
+            }
+            basketDTO.setBasketQuantity(totalQuantity + quantity);
+            basketDTO.setBasketPrice(totalPrice + price);
+            CartDAO cartDAO = new CartDAO();
+            cartDAO.updateCartSameBasket(cartDTO, basketDTO, basketItemDTO, preBasket, foodDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Intent intent = new Intent(FoodDetailActivity.this, RestaurantMenuActivity.class);
+                    intent.putExtra("restaurantID", restaurantID);
+                    startActivity(intent);
+                }
+            });
+        } else if (preBasketItem != null) {
+            System.out.println("vao 2");
+            //same item so update it
+            basketItemDTO.setQuantity(quantity);
+            basketItemDTO.setPrice(price);
+            double totalPrice = 0;
+            int totalQuantity = 0;
+            for (BasketItemDTO list : basketDocumentAvailable.getBasketItemsInfo()) {
+                totalPrice += list.getPrice();
+                totalQuantity += list.getQuantity();
+            }
+            if (quantity >= preBasketItem.getQuantity()) {
+                totalPrice = totalPrice + (price - preBasketItem.getPrice());
+                totalQuantity = totalQuantity + (quantity - preBasketItem.getQuantity());
+            } else {
+                totalPrice = totalPrice - (preBasketItem.getPrice() - price);
+                totalQuantity = totalQuantity - (preBasketItem.getQuantity() - quantity);
+            }
+            basketDTO.setBasketQuantity(totalQuantity);
+            basketDTO.setBasketPrice(totalPrice);
+            CartDAO cartDAO = new CartDAO();
+            cartDAO.updateCart(cartDTO, basketDTO, basketItemDTO, preBasketItem, preBasket).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Intent intent = new Intent(FoodDetailActivity.this, RestaurantMenuActivity.class);
+                    intent.putExtra("restaurantID", restaurantID);
+                    startActivity(intent);
+                }
+            });
+        } else if (preCart != null && preBasket == null && preBasketItem == null) {
+            //same cart but diffrent restaurant
+            System.out.println("vao 3");
+            basketItemDTO = new BasketItemDTO();
+            basketItemDTO.setQuantity(quantity);
+            basketItemDTO.setPrice(price);
+            basketDTO = new BasketDTO();
+            basketDTO.setRestaurantsInfo(restaurantDTO);
+            basketDTO.setBasketQuantity(quantity);
+            basketDTO.setBasketPrice(price);
+            CartDAO cartDAO = new CartDAO();
+            cartDAO.updateCartSameUser(cartDTO, basketDTO, basketItemDTO, foodDTO, preCart).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Intent intent = new Intent(FoodDetailActivity.this, RestaurantMenuActivity.class);
+                    intent.putExtra("restaurantID", restaurantID);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            System.out.println("vao 1");
             UserDAO userDAO = new UserDAO();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
@@ -259,38 +334,8 @@ public class FoodDetailActivity extends AppCompatActivity {
                     }
                 });
             }
-        } else if (basketDocumentAvailable != null) {
-            //different item so update it
-
-        } else {
-            //same item so update it
-            basketItemDTO.setQuantity(quantity);
-            basketItemDTO.setPrice(price);
-            double totalPrice = 0;
-            int totalQuantity = 0;
-            for (BasketItemDTO list : basketDocumentAvailable.getBasketItemsInfo()) {
-                totalPrice += list.getPrice();
-                totalQuantity += list.getQuantity();
-            }
-            if (quantity >= preBasketItem.getQuantity()) {
-                totalPrice = totalPrice + (price - preBasketItem.getPrice());
-                totalQuantity = totalQuantity + (quantity - preBasketItem.getQuantity());
-            } else {
-                totalPrice = totalPrice - (preBasketItem.getPrice() - price);
-                totalQuantity = totalQuantity - (preBasketItem.getQuantity() - quantity);
-            }
-            basketDTO.setBasketQuantity(totalQuantity);
-            basketDTO.setBasketPrice(totalPrice);
-            CartDAO cartDAO = new CartDAO();
-            cartDAO.updateCart(cartDTO, basketDTO, basketItemDTO, preBasketItem, preBasket).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Intent intent = new Intent(FoodDetailActivity.this, RestaurantMenuActivity.class);
-                    intent.putExtra("restaurantID", restaurantID);
-                    startActivity(intent);
-                }
-            });
         }
+
     }
 
     private void createOrder() {
