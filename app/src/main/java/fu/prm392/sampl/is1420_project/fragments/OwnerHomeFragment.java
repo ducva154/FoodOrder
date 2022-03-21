@@ -1,15 +1,14 @@
 package fu.prm392.sampl.is1420_project.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -99,7 +98,7 @@ public class OwnerHomeFragment extends Fragment {
                 Log.d("USER", "dto: " + restaurantDTOList);
                 if (restaurantDTOList != null) {
                     RestaurantAdapter restaurantAdapter = new RestaurantAdapter(restaurantDTOList
-                            , getContext(), new OnItemClickListener() {
+                            , getActivity(), new OnItemClickListener() {
                         @Override
                         public void onItemClick(RestaurantDTO item) {
 

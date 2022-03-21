@@ -15,11 +15,8 @@ import java.util.List;
 
 import fu.prm392.sampl.is1420_project.R;
 import fu.prm392.sampl.is1420_project.dto.FoodDTO;
-import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
-import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 import fu.prm392.sampl.is1420_project.listener.OnItemFoodClickListener;
 import fu.prm392.sampl.is1420_project.viewholder.FoodViewHolder;
-import fu.prm392.sampl.is1420_project.viewholder.RestaurantViewHolder;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodViewHolder> {
     private List<FoodDTO> list;
@@ -47,7 +44,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodViewHolder> {
         holder.bind(list.get(position), listener);
         holder.getTxtFoodName().setText(list.get(position).getName());
         holder.getTxtDescription().setText(list.get(position).getDescription());
-        holder.getTxtPrice().setText(String.format("%s", list.get(position).getPrice()));
+        holder.getTxtPrice().setText(list.get(position).getPrice() + "đ");
         if (list.get(position).getImage() != null) {
             Uri uri = Uri.parse(list.get(position).getImage());
             Glide.with(holder.getImgFood().getContext())

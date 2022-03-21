@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,9 +13,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 import fu.prm392.sampl.is1420_project.R;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
+import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 import fu.prm392.sampl.is1420_project.viewholder.RestaurantViewHolder;
 
 public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantViewHolder> {
@@ -56,7 +55,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantViewHolder
 
         if (list.get(position).getDistance() != null) {
             holder.getLnlDistance().setVisibility(View.VISIBLE);
-            holder.getTxtDistance().setText(String.format("%s", list.get(position).getDistance()));
+            holder.getTxtDistance().setText(list.get(position).getDistance() + " km");
         }
     }
 

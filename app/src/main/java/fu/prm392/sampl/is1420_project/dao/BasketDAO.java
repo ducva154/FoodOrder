@@ -16,4 +16,10 @@ public class BasketDAO {
                 .whereEqualTo("basketsInfo.restaurantsInfo.restaurantID", restaurantID)
                 .get();
     }
+
+    public Task<QuerySnapshot> getBasketByBasketID(String basketID) {
+        return db.collection("baskets")
+                .whereEqualTo("basketsInfo.basketID", basketID)
+                .get();
+    }
 }
