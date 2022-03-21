@@ -234,9 +234,45 @@ public class CartDAO {
         });
     }
 
+    public Task<Void> removeBasketItem(CartDTO cartDTO, BasketDTO basketDTO, BasketItemDTO preBasketItem, BasketDTO preBasket) {
+        DocumentReference docBasketItem = db.collection("basketItems")
+                .document(preBasketItem.getBasketItemID());
+        DocumentReference docBasket = db.collection("baskets")
+                .document(basketDTO.getBasketID());
+        DocumentReference docCart = db.collection("carts")
+                .document(cartDTO.getCartID());
+
+        WriteBatch batch = db.batch();
+        batch.delete(docBasketItem);
+        batch.commit();
+
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                Map<String, Object> dataDeleteBasketItem = new HashMap<>();
+                dataDeleteBasketItem.put("basketItemsInfo", FieldValue.arrayRemove(preBasketItem));
+                dataDeleteBasketItem.put("basketsInfo.basketPrice", basketDTO.getBasketPrice());
+                dataDeleteBasketItem.put("basketsInfo.basketQuantity", basketDTO.getBasketQuantity());
+                transaction.update(docBasket, dataDeleteBasketItem);
+
+                Map<String, Object> dataDeleteBasket = new HashMap<>();
+                dataDeleteBasket.put("basketsInfo", FieldValue.arrayRemove(preBasket));
+                transaction.update(docCart, dataDeleteBasket);
+
+                Map<String, Object> dataUpdateBasket = new HashMap<>();
+                dataUpdateBasket.put("basketsInfo", FieldValue.arrayUnion(basketDTO));
+                transaction.update(docCart, dataUpdateBasket);
+                return null;
+            }
+        });
+    }
+
     public Task<QuerySnapshot> getCartByUserID(String uid) {
         return db.collection("carts")
                 .whereEqualTo("cartsInfo.userInfo.userID", uid)
                 .get();
     }
+
+
 }

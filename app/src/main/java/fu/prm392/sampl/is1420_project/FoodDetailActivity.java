@@ -41,7 +41,7 @@ import fu.prm392.sampl.is1420_project.dto.UserDTO;
 
 public class FoodDetailActivity extends AppCompatActivity {
 
-    private Button btnMinus, btnPlus, btnAddToCart;
+    private Button btnMinus, btnPlus, btnAddToCart, btnRemove;
     private FloatingActionButton btnBack;
     private TextView txtFoodName, txtDescription, txtQuantity, txtPrice;
     private ImageView imgFood;
@@ -64,6 +64,7 @@ public class FoodDetailActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnPlus = findViewById(R.id.btnPlus);
         btnMinus = findViewById(R.id.btnMinus);
+        btnRemove = findViewById(R.id.btnRemove);
         btnAddToCart = findViewById(R.id.btnAddToCart);
         txtFoodName = findViewById(R.id.txtFoodName);
         txtDescription = findViewById(R.id.txtDescription);
@@ -133,7 +134,10 @@ public class FoodDetailActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (quantity == 0) {
+                if (quantity == 0 && preBasketItem != null) {
+                    btnAddToCart.setVisibility(View.GONE);
+                    btnRemove.setVisibility(View.VISIBLE);
+                } else if (quantity == 0) {
                     btnAddToCart.setVisibility(View.GONE);
                 } else {
                     btnAddToCart.setVisibility(View.VISIBLE);
@@ -143,6 +147,29 @@ public class FoodDetailActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
 
+            }
+        });
+
+        btnRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CartDAO cartDAO = new CartDAO();
+                double totalPrice = 0;
+                int totalQuantity = 0;
+                for (BasketItemDTO list : basketDocumentAvailable.getBasketItemsInfo()) {
+                    totalPrice += list.getPrice();
+                    totalQuantity += list.getQuantity();
+                }
+                basketDTO.setBasketQuantity(totalQuantity - preBasketItem.getQuantity());
+                basketDTO.setBasketPrice(totalPrice - preBasketItem.getPrice());
+                cartDAO.removeBasketItem(cartDTO, basketDTO, preBasketItem, preBasket).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Intent intent = new Intent(FoodDetailActivity.this, RestaurantMenuActivity.class);
+                        intent.putExtra("restaurantID", restaurantID);
+                        startActivity(intent);
+                    }
+                });
             }
         });
 
