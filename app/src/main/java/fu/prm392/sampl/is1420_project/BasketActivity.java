@@ -25,6 +25,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -35,8 +37,14 @@ import java.util.List;
 import fu.prm392.sampl.is1420_project.adapter.BasketItemAdapter;
 import fu.prm392.sampl.is1420_project.dao.BasketDAO;
 import fu.prm392.sampl.is1420_project.dao.BasketItemDAO;
+import fu.prm392.sampl.is1420_project.dao.CartDAO;
+import fu.prm392.sampl.is1420_project.dao.OrderDAO;
+import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.dto.BasketDocument;
 import fu.prm392.sampl.is1420_project.dto.BasketItemDocument;
+import fu.prm392.sampl.is1420_project.dto.CartDTO;
+import fu.prm392.sampl.is1420_project.dto.OrderDTO;
+import fu.prm392.sampl.is1420_project.dto.UserDTO;
 import fu.prm392.sampl.is1420_project.listener.OnItemBasketItemClickListener;
 
 public class BasketActivity extends AppCompatActivity {
@@ -51,6 +59,8 @@ public class BasketActivity extends AppCompatActivity {
     private String locationName;
     private String basketID;
     private BasketDocument basketDocument;
+    private List<BasketItemDocument> list;
+    private CartDTO preCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +87,49 @@ public class BasketActivity extends AppCompatActivity {
             }
         });
 
+        btnOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                order();
+            }
+        });
+
+    }
+
+    private void order() {
+        UserDAO userDAO = new UserDAO();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        userDAO.getUserById(user.getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                UserDTO userDTO = documentSnapshot.get("userInfo", UserDTO.class);
+                CartDTO cartDTO = basketDocument.getCartsInfo();
+                OrderDTO orderDTO = new OrderDTO();
+                orderDTO.setUserInfo(userDTO);
+                orderDTO.setBasketsInfo(basketDocument.getBasketsInfo());
+                orderDTO.setListBasketItem(list);
+                OrderDAO orderDAO = new OrderDAO();
+                orderDAO.createOrder(orderDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        CartDAO cartDAO = new CartDAO();
+                        for (BasketItemDocument item : list) {
+                            cartDAO.removeAfterOrder(item.getBasketItemsInfo().getBasketItemID());
+                        }
+                        cartDAO.removeBasket(basketDocument.getBasketsInfo().getBasketID());
+                        cartDAO.updateCartAfterOrder(cartDTO, basketDocument.getBasketsInfo()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Intent intent = new Intent(BasketActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
     }
 
     @Override
@@ -100,13 +153,14 @@ public class BasketActivity extends AppCompatActivity {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                     basketDocument = doc.toObject(BasketDocument.class);
+                    preCart = doc.toObject(BasketDocument.class).getCartsInfo();
                     txtBasketPrice.setText(basketDocument.getBasketsInfo().getBasketPrice() + "");
                     BasketItemDAO basketItemDAO = new BasketItemDAO();
                     basketItemDAO.getBasketItemByBasketID(basketDocument.getBasketsInfo().getBasketID()).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if (!queryDocumentSnapshots.isEmpty()) {
-                                List<BasketItemDocument> list = new ArrayList<>();
+                                list = new ArrayList<>();
                                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                                     BasketItemDocument item = doc.toObject(BasketItemDocument.class);
                                     list.add(item);
@@ -114,7 +168,10 @@ public class BasketActivity extends AppCompatActivity {
                                 BasketItemAdapter basketItemAdapter = new BasketItemAdapter(list, getApplicationContext(), new OnItemBasketItemClickListener() {
                                     @Override
                                     public void onItemClick(BasketItemDocument item) {
-
+                                        Intent intent = new Intent(BasketActivity.this, FoodDetailActivity.class);
+                                        intent.putExtra("foodID", item.getFoodsInfo().getFoodID());
+                                        intent.putExtra("restaurantID", item.getBasketsInfo().getRestaurantsInfo().getRestaurantID());
+                                        startActivity(intent);
                                     }
                                 });
                                 recycleBasketItemView.setAdapter(basketItemAdapter);

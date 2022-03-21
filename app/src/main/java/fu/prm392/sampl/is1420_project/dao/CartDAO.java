@@ -275,4 +275,26 @@ public class CartDAO {
     }
 
 
+    public Task<Void> removeAfterOrder(String basketItemID) {
+        return db.collection("basketItems").document(basketItemID).delete();
+    }
+
+    public Task<Void> removeBasket(String basketID) {
+        return db.collection("baskets").document(basketID).delete();
+    }
+
+    public Task<Void> updateCartAfterOrder(CartDTO cartDTO, BasketDTO basketDTO) {
+        DocumentReference docCart = db.collection("carts")
+                .document(cartDTO.getCartID());
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                Map<String, Object> dataDeleteBasket = new HashMap<>();
+                dataDeleteBasket.put("basketsInfo", FieldValue.arrayRemove(basketDTO));
+                transaction.update(docCart, dataDeleteBasket);
+                return null;
+            }
+        });
+    }
 }
