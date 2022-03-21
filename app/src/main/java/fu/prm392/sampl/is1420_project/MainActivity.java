@@ -18,6 +18,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.fragments.CartFragment;
+import fu.prm392.sampl.is1420_project.fragments.OrderFragment;
 import fu.prm392.sampl.is1420_project.fragments.ProfileFragment;
 import fu.prm392.sampl.is1420_project.fragments.UserHomeFragment;
 
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.pageCart:
                         selectedFragment = new CartFragment();
+                        break;
+                    case R.id.pageHistory:
+                        selectedFragment = new OrderFragment();
                         break;
                     default:
                         return false;

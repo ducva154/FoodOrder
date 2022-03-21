@@ -1,5 +1,6 @@
 package fu.prm392.sampl.is1420_project.dto;
 
+import java.util.Date;
 import java.util.List;
 
 public class OrderDTO {
@@ -7,8 +8,35 @@ public class OrderDTO {
     private UserDTO userInfo;
     private BasketDTO basketsInfo;
     private List<BasketItemDocument> listBasketItem;
+    private Date orderTime;
+    private String address;
+    private String status;
 
     public OrderDTO() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Date getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(Date orderTime) {
+        this.orderTime = orderTime;
     }
 
     public List<BasketItemDocument> getListBasketItem() {

@@ -32,6 +32,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import fu.prm392.sampl.is1420_project.adapter.BasketItemAdapter;
@@ -105,9 +106,12 @@ public class BasketActivity extends AppCompatActivity {
                 UserDTO userDTO = documentSnapshot.get("userInfo", UserDTO.class);
                 CartDTO cartDTO = basketDocument.getCartsInfo();
                 OrderDTO orderDTO = new OrderDTO();
+                orderDTO.setOrderTime(Calendar.getInstance().getTime());
                 orderDTO.setUserInfo(userDTO);
+                orderDTO.setStatus("Waiting for confirmation");
                 orderDTO.setBasketsInfo(basketDocument.getBasketsInfo());
                 orderDTO.setListBasketItem(list);
+                orderDTO.setAddress(locationName);
                 OrderDAO orderDAO = new OrderDAO();
                 orderDAO.createOrder(orderDTO).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

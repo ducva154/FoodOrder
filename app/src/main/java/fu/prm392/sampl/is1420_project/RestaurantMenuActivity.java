@@ -74,6 +74,16 @@ public class RestaurantMenuActivity extends AppCompatActivity {
             }
         });
 
+        btnCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RestaurantMenuActivity.this, BasketActivity.class);
+                intent.putExtra("basketID", basketDTO.getBasketID());
+                startActivity(intent);
+                finish();
+            }
+        });
+
         Intent intent = getIntent();
         restaurantID = intent.getStringExtra("restaurantID");
         if (restaurantID != null) {
@@ -93,8 +103,9 @@ public class RestaurantMenuActivity extends AppCompatActivity {
                 if (!queryDocumentSnapshots.isEmpty()) {
                     DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                     CartDocument cartDocument = doc.toObject(CartDocument.class);
-                    for (BasketDTO basketDTO : cartDocument.getBasketsInfo()) {
-                        if (basketDTO.getRestaurantsInfo().getRestaurantID().equals(restaurantID)) {
+                    for (BasketDTO b : cartDocument.getBasketsInfo()) {
+                        if (b.getRestaurantsInfo().getRestaurantID().equals(restaurantID)) {
+                            basketDTO = b;
                             btnCart.setVisibility(View.VISIBLE);
                             btnCart.setText("Basket - " + basketDTO.getBasketQuantity() + " items - " + basketDTO.getBasketPrice());
                         }
@@ -102,20 +113,6 @@ public class RestaurantMenuActivity extends AppCompatActivity {
                 }
             }
         });
-
-//        OrderDAO orderDAO = new OrderDAO();
-//        orderDAO.getOrderByRestaurantID(restaurantID).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                orderDTO = new OrderDTO();
-//                if(!queryDocumentSnapshots.isEmpty()){
-//                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-//                    orderDTO = doc.toObject(OrderDTO.class);
-//                    btnCart.setVisibility(View.VISIBLE);
-//                    btnCart.setText("Cart - "+orderDTO.get);
-//                }
-//            }
-//        });
     }
 
 
