@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -65,6 +66,7 @@ public class CreateUserActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.txtPassword);
         txtConfirm = findViewById(R.id.txtConfirm);
         btnCreate = findViewById(R.id.btnCreateUser);
+        //Chua lam btn choose image
         btnChooseImage = findViewById(R.id.btnChooseImage);
         tilRole = findViewById(R.id.tilRole);
         tilStatus = findViewById(R.id.tilStatus);
@@ -126,6 +128,15 @@ public class CreateUserActivity extends AppCompatActivity {
                     }
 
                 }
+            }
+        });
+
+        imgUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent gallery = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(gallery, RC_IMAGE_PICKER);
             }
         });
     }
@@ -190,7 +201,7 @@ public class CreateUserActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("EMAIL", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(CreateUserActivity.this, "Create failed.",
+                            Toast.makeText(CreateUserActivity.this, "Create failed. " + task.getException(),
                                     Toast.LENGTH_SHORT).show();
                             progressDialog.cancel();
                         }
@@ -253,13 +264,17 @@ public class CreateUserActivity extends AppCompatActivity {
                 utils.showError(txtPhone, "Phone must be between 8 and 11 number");
                 result = false;
             }
+        } else {
+            utils.showError(txtPhone, "Phone must not be blank");
+            result = false;
         }
+
         if (validation.isEmpty(fullName)) {
             utils.showError(txtName, "Username must not be blank");
             result = false;
         }
         if (!validation.isValidPassword(password)) {
-            utils.showError(txtPassword, "Password must be more than 8 character");
+            utils.showError(txtPassword, "Password must be more than 6 character");
             result = false;
         }
         if (validation.isEmpty(confirm) || !confirm.equals(password)) {

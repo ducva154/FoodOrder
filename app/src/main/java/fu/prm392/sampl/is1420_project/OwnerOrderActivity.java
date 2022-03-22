@@ -33,6 +33,14 @@ public class OwnerOrderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_owner_order);
         recycleOrderView = findViewById(R.id.recycleOrderView);
         recycleOrderView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        topAppBar = findViewById(R.id.topAppBar);
+        topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         Intent intent = getIntent();
         restaurantID = intent.getStringExtra("restaurantID");
         topAppBar = findViewById(R.id.topAppBar);

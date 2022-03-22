@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +25,7 @@ import java.util.List;
 import fu.prm392.sampl.is1420_project.AdminEditProfileActivity;
 import fu.prm392.sampl.is1420_project.CreateUserActivity;
 import fu.prm392.sampl.is1420_project.R;
+import fu.prm392.sampl.is1420_project.SearchUserActivity;
 import fu.prm392.sampl.is1420_project.adapter.UserAdapter;
 import fu.prm392.sampl.is1420_project.dao.UserDAO;
 import fu.prm392.sampl.is1420_project.dto.UserDTO;
@@ -43,6 +45,7 @@ public class ManageUserFragment extends Fragment {
     private RecyclerView recycleUserView;
     private ExtendedFloatingActionButton btnCreateUser;
     private TextInputLayout etSearchUser;
+    private TextInputEditText tetSearch;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -88,11 +91,28 @@ public class ManageUserFragment extends Fragment {
         etSearchUser = view.findViewById(R.id.etSearchUser);
         btnCreateUser = view.findViewById(R.id.btnCreateUser);
         recycleUserView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        tetSearch = view.findViewById(R.id.tetSeach);
         btnCreateUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), CreateUserActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        etSearchUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchUserActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+        tetSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchUserActivity.class);
                 startActivity(intent);
             }
         });

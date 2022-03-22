@@ -7,6 +7,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,13 +22,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.GeoPoint;
@@ -43,12 +44,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fu.prm392.sampl.is1420_project.GoogleMapActivity;
-import fu.prm392.sampl.is1420_project.RestaurantMenuActivity;
-import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 import fu.prm392.sampl.is1420_project.R;
+import fu.prm392.sampl.is1420_project.RestaurantMenuActivity;
+import fu.prm392.sampl.is1420_project.SearchRestaurantActivity;
 import fu.prm392.sampl.is1420_project.adapter.RestaurantAdapter;
 import fu.prm392.sampl.is1420_project.dao.RestaurantDAO;
 import fu.prm392.sampl.is1420_project.dto.RestaurantDTO;
+import fu.prm392.sampl.is1420_project.listener.OnItemClickListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -70,6 +72,8 @@ public class UserHomeFragment extends Fragment {
     private GeoPoint currentGeo;
     private CardView cardNearMe;
     private String locationName;
+    private LinearLayout lnlSearch;
+    private TextInputEditText tetSearch;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -125,6 +129,7 @@ public class UserHomeFragment extends Fragment {
         txtError = view.findViewById(R.id.txtError);
         cardNearMe = view.findViewById(R.id.cardNearMe);
         recycleNearRestaurantView = view.findViewById(R.id.recycleNearRestaurantView);
+        tetSearch = view.findViewById(R.id.tetSeach);
         recyclerRestaurantView.setLayoutManager(new LinearLayoutManager(getContext()));
         recycleNearRestaurantView.setLayoutManager(new LinearLayoutManager(getContext()));
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -135,6 +140,23 @@ public class UserHomeFragment extends Fragment {
                 Intent intent = new Intent(getContext(), GoogleMapActivity.class);
                 intent.putExtra("action", "pickLocation");
                 startActivityForResult(intent, RC_LOCATION);
+            }
+        });
+
+        etSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchRestaurantActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+        tetSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchRestaurantActivity.class);
+                startActivity(intent);
             }
         });
         return view;

@@ -2,6 +2,7 @@ package fu.prm392.sampl.is1420_project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class OrderDetailActivity extends AppCompatActivity {
     private RecyclerView recycleBasketItemView;
     private TextView txtRestaurantName, txtStatus, txtFrom, txtTo, txtBasketPrice;
     private String orderID;
-
+    private MaterialToolbar topAppBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         txtTo = findViewById(R.id.txtTo);
         txtBasketPrice = findViewById(R.id.txtBasketPrice);
         recycleBasketItemView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
+        topAppBar = findViewById(R.id.topAppBar);
+        topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         Intent intent = getIntent();
         orderID = intent.getStringExtra("orderID");
 
