@@ -86,7 +86,6 @@ public class RestaurantDAO {
                 .document(restaurantDTO.getRestaurantID());
         DocumentReference docOwner = db.collection("Users").document(uid);
 
-        Log.d("USER", "docRestaurantOfOwner: " + docOwner);
         return db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override

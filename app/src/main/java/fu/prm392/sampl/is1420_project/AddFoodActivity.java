@@ -101,7 +101,13 @@ public class AddFoodActivity extends AppCompatActivity {
 
     public void clickAdd(View view) {
         String name = etFoodName.getEditText().getText().toString();
-        double price = Double.parseDouble(etPrice.getEditText().getText().toString());
+        double price;
+        try {
+            price = Double.parseDouble(etPrice.getEditText().getText().toString());
+        } catch (Exception e) {
+            price = 0;
+        }
+
         String description = etDescription.getEditText().getText().toString();
         if (isValid(name, price, description)) {
             foodDTO = new FoodDTO();
@@ -181,8 +187,8 @@ public class AddFoodActivity extends AppCompatActivity {
             utils.showError(etFoodName, "Name must not be blank");
             result = false;
         }
-        if (validation.isEmpty(String.valueOf(price))) {
-            utils.showError(etPrice, "Price must not be blank");
+        if (price == 0) {
+            utils.showError(etPrice, "Price must be double");
             result = false;
         }
         if (validation.isEmpty(description)) {

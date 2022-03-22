@@ -43,6 +43,14 @@ public class OwnerOrderActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         restaurantID = intent.getStringExtra("restaurantID");
+        topAppBar = findViewById(R.id.topAppBar);
+
+        topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     @Override

@@ -119,6 +119,7 @@
             </LinearLayout>
 
         </ScrollView>
+
         <Button
             android:id="@+id/btnAddFood"
             android:layout_width="match_parent"

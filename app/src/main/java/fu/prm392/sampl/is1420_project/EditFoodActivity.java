@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -212,6 +214,26 @@ public class EditFoodActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void clickDelete(View view) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(EditFoodActivity.this);
+        alert.setTitle("Delete food");
+        alert.setMessage("Are you sure you want to delete?");
+        alert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                foodDTO.setStatus("unavailable");
+                updateFood();
+            }
+        });
+        alert.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // close dialog
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
     private boolean isValid(String name, Double price, String description, String status) {

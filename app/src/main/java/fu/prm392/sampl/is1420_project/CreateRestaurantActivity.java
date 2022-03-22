@@ -154,7 +154,7 @@ public class CreateRestaurantActivity extends AppCompatActivity {
                     restaurantDTO.setImage(uri.toString());
 
                     createRestaurant();
-                    System.out.println(("URL IMAGE " + restaurantDTO.getImage()));
+
                 } else {
                     Toast.makeText(CreateRestaurantActivity.this, "upload image fail",
                             Toast.LENGTH_SHORT).show();
