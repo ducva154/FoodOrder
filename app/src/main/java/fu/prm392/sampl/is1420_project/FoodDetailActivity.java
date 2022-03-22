@@ -1,6 +1,7 @@
 package fu.prm392.sampl.is1420_project;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -251,6 +253,14 @@ public class FoodDetailActivity extends AppCompatActivity {
                     txtFoodName.setText(foodDTO.getName());
                     txtDescription.setText(foodDTO.getDescription());
                     txtPrice.setText(foodDTO.getPrice() + "");
+                    try {
+                        Uri uri = Uri.parse(foodDTO.getImage());
+                        Glide.with(imgFood.getContext())
+                                .load(uri)
+                                .into(imgFood);
+                    } catch (Exception e) {
+                        imgFood.setImageResource(R.drawable.image_1);
+                    }
                     price = Double.parseDouble(txtPrice.getText().toString());
                     quantity = Integer.parseInt(txtQuantity.getText().toString());
                 }

@@ -124,4 +124,11 @@ public class RestaurantDAO {
         // Collect all the query results together into a single list
         return tasks;
     }
+
+    public Task<QuerySnapshot> searchRestaurant(String search) {
+        return db.collection("restaurants")
+                .whereGreaterThanOrEqualTo("restaurantsInfo.name", search)
+                .whereLessThanOrEqualTo("restaurantsInfo.name", search + "\uf8ff")
+                .get();
+    }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class OwnerOrderDetailActivity extends AppCompatActivity {
     private TextView txtCustomerName, txtStatus, txtAddress, txtOrderTime, txtBasketPrice;
     private String orderID;
     private Button btnApprove, btnReject;
-
+    private MaterialToolbar topAppBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +41,14 @@ public class OwnerOrderDetailActivity extends AppCompatActivity {
         txtBasketPrice = findViewById(R.id.txtBasketPrice);
         btnApprove = findViewById(R.id.btnApprove);
         btnReject = findViewById(R.id.btnReject);
+        topAppBar = findViewById(R.id.topAppBar);
         recycleBasketItemView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
+        topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         Intent intent = getIntent();
         orderID = intent.getStringExtra("orderID");
 

@@ -154,8 +154,10 @@ public class AdminEditProfileActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+                                            Toast.makeText(AdminEditProfileActivity.this, "Update user successfully", Toast.LENGTH_SHORT).show();
                                             finish();
                                             startActivity(AdminEditProfileActivity.this.getIntent());
+
                                         } else {
                                             Toast.makeText(AdminEditProfileActivity.this,
                                                     "Fail to update User", Toast.LENGTH_SHORT).show();

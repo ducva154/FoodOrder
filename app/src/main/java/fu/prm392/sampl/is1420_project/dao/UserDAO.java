@@ -112,4 +112,10 @@ public class UserDAO {
         return db.collection("Users").document(userID).collection("cart").get();
     }
 
+    public Task<QuerySnapshot> searchUser(String search) {
+        return db.collection("Users")
+                .whereGreaterThanOrEqualTo("userInfo.name", search)
+                .whereLessThanOrEqualTo("userInfo.name", search + "\uf8ff")
+                .get();
+    }
 }

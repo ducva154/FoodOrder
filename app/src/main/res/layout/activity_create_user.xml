@@ -52,15 +52,6 @@
                         android:layout_gravity="center"
                         android:scaleType="centerCrop" />
                 </androidx.cardview.widget.CardView>
-
-                <Button
-                    android:id="@+id/btnChooseImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="choice image profile"
-                    android:textSize="10dp" />
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/txtEmail"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"

@@ -2,12 +2,14 @@ package fu.prm392.sampl.is1420_project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -23,6 +25,7 @@ public class OwnerOrderActivity extends AppCompatActivity {
 
     private RecyclerView recycleOrderView;
     private String restaurantID;
+    private MaterialToolbar topAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,14 @@ public class OwnerOrderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_owner_order);
         recycleOrderView = findViewById(R.id.recycleOrderView);
         recycleOrderView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        topAppBar = findViewById(R.id.topAppBar);
+        topAppBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
         Intent intent = getIntent();
         restaurantID = intent.getStringExtra("restaurantID");
     }
