@@ -64,7 +64,6 @@ public class FoodDAO {
         Map<String, Object> dataInRestaurant = new HashMap<>();
         dataInRestaurant.put("foodsInfo", FieldValue.arrayUnion(foodDTO));
         batch.update(foodInfoReference, dataInRestaurant);
-
         return batch.commit();
     }
 
@@ -78,7 +77,6 @@ public class FoodDAO {
                 .document(foodDTO.getFoodID());
         DocumentReference docRestaurant = db.collection("restaurants")
                 .document(restaurantID);
-        Log.d("USER", "docFoodOfRestaurant: " + docRestaurant);
 
         return db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
